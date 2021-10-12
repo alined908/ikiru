@@ -1,21 +1,182 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import Countdown from "react-countdown";
-import { Button, CircularProgress, Snackbar } from "@material-ui/core";
+import { CircularProgress, Snackbar } from "@material-ui/core";
 import Alert from "@material-ui/lab/Alert";
+
 import * as anchor from "@project-serum/anchor";
+
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
-import { WalletDialogButton } from "@solana/wallet-adapter-material-ui";
-import {CandyMachine, awaitTransactionSignatureConfirmation, getCandyMachineState, mintOneToken, shortenAddress,} from "../candy-machine";
-import { AnchorWallet, WalletContextState } from "@solana/wallet-adapter-react";
 
-const ConnectButton = styled(WalletDialogButton)``;
+import { useAnchorWallet } from "@solana/wallet-adapter-react";
+import { useSpring, animated} from 'react-spring';
+import {
+  CandyMachine,
+  awaitTransactionSignatureConfirmation,
+  getCandyMachineState,
+  mintOneToken,
+  shortenAddress,
+} from "../candy-machine";
+import { Wrapper } from "../components/layout/common";
+import useMeasure from "react-use-measure";
+import Rotatooor from "../components/Rotatooor";
+
 const CounterText = styled.span``; // add your styles here
-const MintContainer = styled.div``; // add your styles here
-const MintButton = styled(Button)``; // add your styles here
 
-export interface MintSectionProps {
-  wallet: WalletContextState,
+interface ButtonProps {
+  background?: string
+  size?: string
+}
+
+export const MintButton = styled.button<ButtonProps>`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: ${props => {
+    if (props.size === 'small') {
+      return '1rem'
+    } else {
+      return '1.1rem'
+    }
+  }};
+  cursor: pointer;
+  font-size:  ${props => {
+    if (props.size === 'small') {
+      return '1rem'
+    } else {
+      return '1.2rem'
+    }
+  }};
+  font-weight: 700;
+  color: white;
+  font-family: 'Rubik', sans-serif;
+  
+  outline: none;
+  border-radius: .5rem;
+  min-width: ${props => {
+    if (props.size === 'small') {
+      return '100px'
+    } else {
+      return '169px'
+    }
+  }};
+  min-height: ${props => {
+    if (props.size === 'small') {
+      return '45px'
+    } else {
+      return '60px'
+    }
+  }};
+  border: none;
+  background: ${props => props.background};
+  transition: all .33s ease;
+
+  &:hover {
+    box-shadow: var(--shadow-l);
+    transform: scale(1.05);
+    background: var(--black-hover);
+  }
+
+  &:disabled {
+    background: grey;
+    cursor: default;
+    box-shadow: none;
+  }
+
+  &:disabled:hover {
+    transform: none;
+  }
+`;
+
+const RainbowText = styled.div`
+   background: linear-gradient(to right, #ef5350, #f48fb1, #7e57c2, #2196f3, #26c6da, #43a047, #eeff41, #f9a825, #ff5722);
+   background-size: 200% 200%;
+   -webkit-background-clip: text;
+   -webkit-text-fill-color: transparent;
+   
+   animation: Animation 2.5s ease infinite;
+    -webkit-animation: Animation 2.5s ease infinite;
+   
+
+   @keyframes Animation { 
+    0%{background-position:10% 0%}
+    50%{background-position:91% 100%}
+    100%{background-position:10% 0%}
+  }
+  @-webkit-keyframes Animation {
+    0%{background-position:10% 0%}
+    50%{background-position:91% 100%}
+    100%{background-position:10% 0%}
+}
+`
+
+export const RainbowButton = ({onClick, children} : any) => {
+  return (
+    <MintButton size="small" background="black" onClick={onClick}>
+      <RainbowText>
+        {children}
+      </RainbowText>
+    </MintButton>
+  )
+}
+
+const Directions = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 2rem;
+
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0;
+    margin-top: 1.5rem;
+    color: red;
+  }
+
+ 
+`
+
+const Tip = styled.div`
+  font-size: 1rem !important;
+  color: grey;
+`
+
+const Steps = styled.div`
+  margin-top: 2rem;
+
+  > div {
+    margin-left: 2rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
+`
+
+const MintInner = styled.div`
+    background: white;
+    padding: 1rem 2rem 2rem 2rem;
+    margin-left: 3rem;
+    box-shadow: var(--shadow-m);
+`;
+
+const CustomWrapper = styled(Wrapper)`
+  
+`
+
+const MintButtonContainer = styled.div`
+  display: flex;
+
+  > div {
+    margin-left: 2rem;
+  }
+
+  .MuiCircularProgress-root {
+    width: 30px !important;
+    height: 30px !important;
+    color: black !important;
+  }
+`
+
+export interface HomeProps {
   candyMachineId: anchor.web3.PublicKey;
   config: anchor.web3.PublicKey;
   connection: anchor.web3.Connection;
@@ -24,11 +185,56 @@ export interface MintSectionProps {
   txTimeout: number;
 }
 
-const MintSection = (props: MintSectionProps) => {
+const WrappedProgressBar = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  width: 475px;
+  height: 50px;
+  background: white;
+  border: var(--border);
+  border-radius: .5rem;
+  margin-bottom: 2rem;
+  overflow: hidden;
+`
+
+interface ProgressBarProps {
+  progress: number
+  end: number
+}
+
+const ProgressBar = ({progress, end}: ProgressBarProps) => {
+  const [ref, {width}] = useMeasure();
+  const props = useSpring({ from: { width: 0}, to:{ width: 2/end * width } })
+
+  return (
+    <WrappedProgressBar ref={ref}>
+      <animated.div className="fill" style={props}/>
+      <animated.div className="content">
+        {`${progress}/${end}`}
+      </animated.div>
+    </WrappedProgressBar>
+  )
+}
+
+const MintWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  top: 30%;
+`
+
+const MintSection = (props: HomeProps) => {
   const [balance, setBalance] = useState<number>();
   const [isActive, setIsActive] = useState(false); // true when countdown completes
   const [isSoldOut, setIsSoldOut] = useState(false); // true when items remaining is zero
   const [isMinting, setIsMinting] = useState(false); // true when user got to press MINT
+  const [isFetchingCMState, setisFetchingCMState] = useState(true);
+
+  const [itemsAvailable, setItemsAvailable] = useState(0);
+  const [itemsRedeemed, setItemsRedeemed] = useState(0);
+  const [itemsRemaining, setItemsRemaining] = useState(0);
 
   const [alertState, setAlertState] = useState<AlertState>({
     open: false,
@@ -37,16 +243,45 @@ const MintSection = (props: MintSectionProps) => {
   });
 
   const [startDate, setStartDate] = useState(new Date(props.startDate));
+
+  const wallet = useAnchorWallet();
   const [candyMachine, setCandyMachine] = useState<CandyMachine>();
+
+  const refreshCandyMachineState = () => {
+    (async () => {
+      if (!wallet) return;
+
+      const {
+        candyMachine,
+        goLiveDate,
+        itemsAvailable,
+        itemsRemaining,
+        itemsRedeemed,
+      } = await getCandyMachineState(
+        wallet as anchor.Wallet,
+        props.candyMachineId,
+        props.connection
+      );
+
+      setItemsAvailable(itemsAvailable);
+      setItemsRemaining(itemsRemaining);
+      setItemsRedeemed(itemsRedeemed);
+
+      setIsSoldOut(itemsRemaining === 0);
+      setStartDate(goLiveDate);
+      setCandyMachine(candyMachine);
+      setisFetchingCMState(false);
+    })();
+  };
 
   const onMint = async () => {
     try {
       setIsMinting(true);
-      if (props.wallet.connected && candyMachine?.program && props.wallet.publicKey) {
+      if (wallet && candyMachine?.program) {
         const mintTxId = await mintOneToken(
           candyMachine,
           props.config,
-          props.wallet.publicKey,
+          wallet.publicKey,
           props.treasury
         );
 
@@ -97,87 +332,88 @@ const MintSection = (props: MintSectionProps) => {
         severity: "error",
       });
     } finally {
-      if (props.wallet?.publicKey) {
-        const balance = await props.connection.getBalance(props.wallet?.publicKey);
+      if (wallet) {
+        const balance = await props.connection.getBalance(wallet.publicKey);
         setBalance(balance / LAMPORTS_PER_SOL);
       }
       setIsMinting(false);
+      refreshCandyMachineState();
     }
   };
 
   useEffect(() => {
     (async () => {
-      if (props.wallet?.publicKey) {
-        const balance = await props.connection.getBalance(props.wallet.publicKey);
+      if (wallet) {
+        const balance = await props.connection.getBalance(wallet.publicKey);
         setBalance(balance / LAMPORTS_PER_SOL);
       }
     })();
-  }, [props.wallet, props.connection]);
+  }, [wallet, props.connection]);
 
-  useEffect(() => {
-    (async () => {
-      if (!props.wallet || !props.wallet.publicKey || !props.wallet.signAllTransactions || !props.wallet.signTransaction) { 
-        return;
-      }
-
-      const anchorWallet = {
-        publicKey: props.wallet.publicKey,
-        signAllTransactions: props.wallet.signAllTransactions,
-        signTransaction: props.wallet.signTransaction,
-      } as anchor.Wallet;
-
-      const { candyMachine, goLiveDate, itemsRemaining } =
-        await getCandyMachineState(
-          anchorWallet,
-          props.candyMachineId,
-          props.connection
-        );
-
-      setIsSoldOut(itemsRemaining === 0);
-      setStartDate(goLiveDate);
-      setCandyMachine(candyMachine);
-    })();
-  }, [props.wallet, props.candyMachineId, props.connection]);
+  useEffect(refreshCandyMachineState, [
+    wallet,
+    props.candyMachineId,
+    props.connection,
+  ]);
 
   return (
-    <main>
-      {props.wallet.connected && (
-        <p>Address: {shortenAddress(props.wallet.publicKey?.toBase58() || "")}</p>
-      )}
+    <CustomWrapper>
+      <MintWrapper>
+        <Rotatooor/>
+        <MintInner>
+          <Directions>
+            <h1>Mint Steps</h1>
+            <Tip>💡 Tip - Use a burner wallet (a wallet specific for this mint) </Tip>
+            <Steps>
+              <div>
+                1. Connect your wallet top right
+              </div>
+              <div>
+                2. Click mint. Approve transaction.
+              </div>
+              <div>
+                3. Check NFT in wallet or in display section.
+              </div>
+            </Steps>
+           
+          </Directions>
+          
+          <ProgressBar progress={itemsRedeemed} end={itemsAvailable}/>
 
-      {props.wallet.connected && (
-        <p>Balance: {(balance || 0).toLocaleString()} SOL</p>
-      )}
-
-      <MintContainer>
-        {!props.wallet.connected ? (
-          <ConnectButton>Connect Wallet</ConnectButton>
-        ) : (
-          <MintButton
-            disabled={isSoldOut || isMinting || !isActive}
-            onClick={onMint}
-            variant="contained"
-          >
-            {isSoldOut ? (
-              "SOLD OUT"
-            ) : isActive ? (
-              isMinting ? (
-                <CircularProgress />
+          <MintButtonContainer>
+            <MintButton
+              background="#BB377D" 
+              disabled={!wallet || isSoldOut || isMinting || !isActive}
+              onClick={onMint}
+            > 
+              {!wallet ? "Connect to Continue " : isFetchingCMState ? <CircularProgress /> : isSoldOut ? (
+                "SOLD OUT"
+              ) : isActive ? (
+                isMinting ? (
+                  <CircularProgress />
+                ) : (
+                  "MINT"
+                )
               ) : (
-                "MINT"
-              )
-            ) : (
-              <Countdown
-                date={startDate}
-                onMount={({ completed }) => completed && setIsActive(true)}
-                onComplete={() => setIsActive(true)}
-                renderer={renderCounter}
-              />
-            )}
-          </MintButton>
-        )}
-      </MintContainer>
-
+                <Countdown
+                  date={startDate}
+                  onMount={({ completed }) => completed && setIsActive(true)}
+                  onComplete={() => setIsActive(true)}
+                  renderer={renderCounter}
+                />
+              )}
+            </MintButton>
+            
+            <div>
+              {wallet && 
+                <h3>
+                  Balance: {(balance || 0).toLocaleString()} SOL
+                </h3>
+              }
+            </div>
+          </MintButtonContainer>
+        </MintInner>
+      </MintWrapper>
       <Snackbar
         open={alertState.open}
         autoHideDuration={6000}
@@ -190,7 +426,7 @@ const MintSection = (props: MintSectionProps) => {
           {alertState.message}
         </Alert>
       </Snackbar>
-    </main>
+    </CustomWrapper>
   );
 };
 
@@ -203,7 +439,7 @@ interface AlertState {
 const renderCounter = ({ days, hours, minutes, seconds, completed }: any) => {
   return (
     <CounterText>
-      {hours} hours, {minutes} minutes, {seconds} seconds
+      {hours + (days || 0) * 24} hours, {minutes} minutes, {seconds} seconds
     </CounterText>
   );
 };

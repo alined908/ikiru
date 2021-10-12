@@ -1,10 +1,14 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800&display=swap');
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: 'Rubik', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  color: black;
+  background: var(--light-bg);
+  min-height: 100vh;
 }
 
 code {
@@ -13,15 +17,81 @@ code {
 }
 
 :root {
-  --shadow-small: 0 1px 0 rgba(27,31,36,0.04);
-  --shadow-medium: 0 3px 6px rgba(140,149,159,0.15);
-  --shadow-large: 0 8px 24px rgba(140,149,159,0.2);
-  --shadow-extra-large: 0 12px 28px rgba(140,149,159,0.3);
-}
-
-h2 {
-
+  --shadow-s: 0 .125rem .25rem rgba(0,0,0,.075);
+  --shadow-m: 0 .5rem 1rem rgba(0,0,0,.15);
+  --shadow-l: 0 1rem 1.25rem rgba(1, 1, 2, 0.2);
+  --shadow-xl: 0 1.25rem 1.5rem rgba(0,0,0,.15);
+  --body-width: 50%;
+  --border: 1px solid #d3d3d3;
+  --light-bg: rgb(243,245,240);
+  --black-hover: rgba(30, 30, 30, .9);
 }
 
 #root {
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+a {
+  text-decoration: none;
+  color: black;
+}
+
+h2 {
+  font-size: 1.6rem;
+}
+
+#root {
+}
+
+.wallet-adapter-button {
+  background: #404144 !important;
+}
+
+.sticky {
+  position: fixed; 
+  top: 0;
+}
+
+.flipper {
+  display: flex;
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  cursor: pointer;
+  will-change: transform, opacity;
+  box-shadow: var(--shadow-m);
+  background: white;
+  border-radius: .25rem;
+  padding: 1rem 2rem;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+
+.fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: lightblue;
+  transition: all 2s ease-in-out;
+  transition-delay: .25s;
+}
+
+.content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: black;
+  font-size: 1.2rem;
+  font-weight: bold;
 }
