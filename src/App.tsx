@@ -20,7 +20,6 @@ import { WalletModalProvider, WalletMultiButton } from "@solana/wallet-adapter-r
 import styled from 'styled-components';
 import TeamSection from "./sections/TeamSection";
 import NFTDisplaySection from "./sections/NFTDisplay";
-import RaritySection from "./sections/RaritySection";
 import MintSection from "./sections/MintSection";
 import AboutUsSection from "./sections/AboutUsSection";
 import FactorySection from "./sections/FactorySection";
@@ -69,14 +68,6 @@ const NavigationTab = styled.div`
   padding: 2rem;
   font-weight: bold;
   font-size: 1.2rem;
-
-  a {
-
-    &:hover {
-      color: pink;
-      transition: all .33s ease;
-    }
-  }
 `
 
 const LandingWrapper = styled.div`
@@ -87,20 +78,24 @@ const LandingWrapper = styled.div`
 const CommunityBannerWrapper = styled.div`
   display: flex;
   position: relative;
-  background: linear-gradient( rgba(0, 0, 0, 0), rgba(0, 0, 0, 0) ), url('/cherry_blossom.png');
+  background-color: white;
+  background-image: url('/traits/unisex/backgrounds/sakura_green.png');
   height: 400px;
   justify-content: center;
   flex-direction: column;
-  background-position: bottom;
+  background-position: top;
+  background-size: cover;
 `
 
 const CommunityCall = styled.h1`
   font-size: 3rem;
   margin-top: 0;
-  color: black;
+  color: rgba(0, 0, 0, .9);
 `
 
 const CommunityBannerInner = styled.div`
+  position: absolute;
+  left: 30%;
   max-width: 1000px;
   margin: auto;
 
@@ -110,14 +105,38 @@ const CommunityBannerInner = styled.div`
   }
 `
 
-const WrappedHeader = styled.div`
+interface WrappedHeaderProps {
+  isHome : boolean
+} 
+
+const WrappedHeader = styled.div<WrappedHeaderProps>`
   display: flex;
-  background: transparent;
+  background: ${props => props.isHome ? "black" : "transparent"};
+  
   width: 100%;
   margin: 0 auto;
   padding: 2rem 0;
   justify-content: space-between;
   z-index: 10;
+  
+
+  a {
+    
+    color: ${props => props.isHome ? "rgb(240, 240, 240)" : "black"};
+    &:hover {
+      transition: all .33s ease;
+      color: pink;
+    }
+
+    div {
+      fill: ${props => props.isHome ? "rgb(240, 240, 240)" : "black"};
+
+      &:hover {
+        transition: all .33s ease;
+        fill: pink;
+      }
+    }
+  }
 `
 
 const InnerHeader = styled.div`
@@ -149,7 +168,7 @@ const Landing = ({children} : any) => {
 
 const CommunityBanner = () => {
   return (
-    <CommunityBannerWrapper>
+    <CommunityBannerWrapper id="banner">
       <CommunityBannerInner>
         <CommunityCall>
           Join The Commmunity
@@ -179,8 +198,28 @@ const Header = () => {
     })();
   }, [wallet, connection]);
 
+  function handleScroll() {
+    const header = document.getElementById('header');
+
+    if (window.pageYOffset > 0) {
+      header?.classList.add("sticky")
+    } else {
+      header?.classList.remove('sticky');
+    }
+  }
+
+  const throttledHandler = useMemo(() => throttle(handleScroll, 300), []);
+
+  useEffect(() => {  
+    window.addEventListener('scroll', throttledHandler);
+
+    return () => {
+      window.removeEventListener("scroll", throttledHandler);
+    };
+  }, [])
+
   return (
-    <WrappedHeader id="header">
+    <WrappedHeader id="header" isHome={location.pathname === '/'}>
       <InnerHeader>
         <Link to="/">
           <Logo>
@@ -195,9 +234,6 @@ const Header = () => {
             </NavigationTab>
             <NavigationTab>
               <Link to="/display">Display</Link>
-            </NavigationTab>
-            <NavigationTab>
-              <Link to="/rarity">Rarity</Link>
             </NavigationTab>
             <NavigationTab>
               <Link to="/random">Factory</Link>
@@ -226,30 +262,6 @@ const App = () => {
     ],[]
   );
 
-  console.log()
-
-  function handleScroll() {
-    const header = document.getElementById('header');
-
-    if (window.pageYOffset > 0) {
-      header?.classList.add("sticky")
-    } else {
-      header?.classList.remove('sticky');
-    }
-  }
-
-  const throttledHandler = useMemo(() => throttle(handleScroll, 300), []);
-
-  
-
-  useEffect(() => {  
-    window.addEventListener('scroll', throttledHandler);
-
-    return () => {
-      window.removeEventListener("scroll", throttledHandler);
-    };
-  }, [])
-
   return (
     <ConnectionProvider endpoint={endpoint}>
       <WalletProvider wallets={wallets}>
@@ -269,9 +281,6 @@ const App = () => {
               </Route>
               <Route path="/display">
                 <NFTDisplaySection/>
-              </Route>
-              <Route path="/rarity">
-                <RaritySection/>
               </Route>
               <Route path="/random">
                 <FactorySection/>

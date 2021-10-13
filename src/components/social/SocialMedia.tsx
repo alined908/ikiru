@@ -10,7 +10,6 @@ interface SocialMediaProps {
 
 const SocialMediaWrapper = styled.div`
     display: flex;
-    border: var(--border);
     width: 36px;
     height: 36px;
     justify-content: center;
@@ -29,9 +28,9 @@ const SocialMediaComponent = ({type, link} : SocialMediaProps) => {
 
     const determineType = (type: string) => {
         if (type === 'discord') {
-            return <Discord fill={isHovered ? "pink" : "black"} width={24} height={24}/>
+            return <Discord fill={isHovered ? "pink" : "inherit"} width={24} height={24}/>
         } else if (type === 'twitter') {
-            return <Twitter fill={isHovered ? "pink" : "black"} width={24} height={24}/>
+            return <Twitter fill={isHovered ? "pink" : "inherit"} width={24} height={24}/>
         }
     }
 

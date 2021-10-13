@@ -29,32 +29,12 @@ interface HeaderProps {
     text: string
 }
 
-const WrappedFlowerRow=styled.div`
-    display: flex;
-    justify-content: center;
-`
-
-const FlowerRow = () => {
-
-    const MAX_FLOWERS = 8;
-
-    return (
-        <WrappedFlowerRow>
-            {
-                _.times(MAX_FLOWERS, () => <Sakura src={`./${chooseRandomSakura()}_sakura.png`}/>)
-            }
-        </WrappedFlowerRow>
-    )
-}
-
 export const Header = ({text} : HeaderProps) => {
     return (
         <WrappedHeader>
-            <FlowerRow/>
             <HeaderText>
                 {text}
             </HeaderText>
-            <FlowerRow/>
         </WrappedHeader>
     )
 }
@@ -142,7 +122,7 @@ export const Avatar = ({image, width, height} : any) => {
     return (
         <Tilt options={tiltOptions}>
             <AvatarWrapper width={width} height={height}>
-                <AvatarImage src={`./${image}.png`}/>
+                <AvatarImage src={`./avatars/${image}.png`}/>
             </AvatarWrapper>
         </Tilt>
         

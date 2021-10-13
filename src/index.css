@@ -36,7 +36,6 @@ code {
 
 a {
   text-decoration: none;
-  color: black;
 }
 
 h2 {
@@ -95,3 +94,14 @@ h2 {
   font-size: 1.2rem;
   font-weight: bold;
 }
+
+.outline {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: white;
+  border-radius: 5px;
+}
+

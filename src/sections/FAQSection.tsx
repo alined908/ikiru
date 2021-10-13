@@ -123,7 +123,7 @@ export const chooseRandomSakura = () => {
 const Question = ({question} : any ) => {
   return (
     <QuestionWrapper>
-      <Sakura src={`./${chooseRandomSakura()}_sakura.png`}/>
+      <Sakura src={`./sakura/${chooseRandomSakura()}_sakura.png`}/>
       {question}
     </QuestionWrapper>
 
