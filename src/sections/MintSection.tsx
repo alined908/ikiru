@@ -25,6 +25,7 @@ const CounterText = styled.span``; // add your styles here
 
 interface ButtonProps {
   background?: string
+  color?: string
   size?: string
 }
 
@@ -48,7 +49,7 @@ export const MintButton = styled.button<ButtonProps>`
     }
   }};
   font-weight: 700;
-  color: white;
+  color: ${props => props.color ?? "white"};
   font-family: 'Rubik', sans-serif;
   
   outline: none;
@@ -89,25 +90,24 @@ export const MintButton = styled.button<ButtonProps>`
 `;
 
 const RainbowText = styled.div`
+
    background: linear-gradient(to right, #ef5350, #f48fb1, #7e57c2, #2196f3, #26c6da, #43a047, #eeff41, #f9a825, #ff5722);
    background-size: 200% 200%;
    -webkit-background-clip: text;
    -webkit-text-fill-color: transparent;
-   
    animation: Animation 2.5s ease infinite;
-    -webkit-animation: Animation 2.5s ease infinite;
-   
+   -webkit-animation: Animation 2.5s ease infinite;
 
    @keyframes Animation { 
-    0%{background-position:10% 0%}
-    50%{background-position:91% 100%}
-    100%{background-position:10% 0%}
+      0%{background-position:10% 0%}
+      50%{background-position:91% 100%}
+      100%{background-position:10% 0%}
+    }
+    @-webkit-keyframes Animation {
+      0%{background-position:10% 0%}
+      50%{background-position:91% 100%}
+      100%{background-position:10% 0%}
   }
-  @-webkit-keyframes Animation {
-    0%{background-position:10% 0%}
-    50%{background-position:91% 100%}
-    100%{background-position:10% 0%}
-}
 `
 
 export const RainbowButton = ({onClick, children} : any) => {

@@ -3,8 +3,9 @@ export const launchDate = new Date(10, 15, 2021);
 
 export enum Rarity {
     Common,
+    Uncommon,
     Rare,
-    Epic,
+    UltraRare,
     Legendary
 }
 
@@ -30,10 +31,11 @@ export interface ITrait {
 }
 
 export const rarityColor = {
-    [Rarity.Common]: '0 .5rem 1rem rgba(0,0, 0, .15)',
-    [Rarity.Rare]: '0 .5rem 1rem rgba(8, 112, 184, 0.5);',
-    [Rarity.Epic]: '0 .5rem 1rem rgba(59, 43, 91, 0.5);',
-    [Rarity.Legendary] : '0 .5rem 1rem rgba(244, 208, 63, .5)'
+    [Rarity.Common]: 'rgb(128,70,27)',
+    [Rarity.Uncommon]: 'rgb(0,128,0)',
+    [Rarity.Rare]: 'rgb(0,0,205)',
+    [Rarity.UltraRare]: 'rgb(191, 64, 191)',
+    [Rarity.Legendary] : 'rgb(255,239,0)'
 }
 
 export const traitTypes = [
@@ -340,28 +342,28 @@ export const traitsJSON : ITraitType[] = [
             {
                 name: "Night Sky",
                 probability: 2.5,
-                rarity_threshold: Rarity.Epic,
+                rarity_threshold: Rarity.UltraRare,
                 gender: Gender.Unisex,
                 path: "traits/unisex/backgrounds/night_sky.png"
             },
             {
                 name: "Green Sakura",
                 probability: 2.5,
-                rarity_threshold: Rarity.Epic,
+                rarity_threshold: Rarity.UltraRare,
                 gender: Gender.Unisex,
                 path: "traits/unisex/backgrounds/sakura_green.png"
             },
             {
                 name: "Solana Seigaha",
                 probability: 2.5,
-                rarity_threshold: Rarity.Epic,
+                rarity_threshold: Rarity.UltraRare,
                 gender: Gender.Unisex,
                 path: "traits/unisex/backgrounds/seigaha_solana.png"
             },
             {
                 name: "Red Square",
                 probability: 2.5,
-                rarity_threshold: Rarity.Epic,
+                rarity_threshold: Rarity.UltraRare,
                 gender: Gender.Unisex,
                 path: "traits/unisex/backgrounds/square_red.png"
             },
@@ -387,12 +389,26 @@ export const traitsJSON : ITraitType[] = [
                 path: "traits/male/body/pale.png"
             },
             {
+                name: "Tan",
+                probability: 33,
+                rarity_threshold: Rarity.Common,
+                gender: Gender.Male,
+                path: "traits/male/body/tan.png"
+            },
+            {
                 name: "Pale",
                 probability: 33,
                 rarity_threshold: Rarity.Common,
                 gender: Gender.Female,
                 path: "traits/female/body/pale.png"
-            }
+            },
+            {
+                name: "Tan",
+                probability: 33,
+                rarity_threshold: Rarity.Common,
+                gender: Gender.Female,
+                path: "traits/female/body/tan.png"
+            },
         ]
     },
     {
@@ -410,14 +426,7 @@ export const traitsJSON : ITraitType[] = [
                 name: "None",
                 probability: 33,
                 rarity_threshold: Rarity.Common,
-                gender: Gender.Male,
-                path: "traits/none.png"
-            },
-            {
-                name: "None",
-                probability: 100,
-                rarity_threshold: Rarity.Common,
-                gender: Gender.Female,
+                gender: Gender.Unisex,
                 path: "traits/none.png"
             }
         ]
@@ -458,30 +467,30 @@ export const traitsJSON : ITraitType[] = [
             {
                 name: "Uniform",
                 probability: 7.5,
-                rarity_threshold: Rarity.Epic,
+                rarity_threshold: Rarity.UltraRare,
                 gender: Gender.Male,
                 path: "traits/male/clothes/uniform.png"
             },
             {
                 name: "Uniform",
                 probability: 7.5,
-                rarity_threshold: Rarity.Epic,
+                rarity_threshold: Rarity.UltraRare,
                 gender: Gender.Female,
                 path: "traits/female/clothes/uniform.png"
             },
             {
                 name: "Blue Yukata",
                 probability: 5,
-                rarity_threshold: Rarity.Epic,
+                rarity_threshold: Rarity.UltraRare,
                 gender: Gender.Male,
                 path: "traits/male/clothes/yukata_blue.png"
             },
             {
                 name: "Purple Yukata",
                 probability: 5,
-                rarity_threshold: Rarity.Epic,
-                gender: Gender.Male,
-                path: "traits/male/clothes/yukata_purple.png"
+                rarity_threshold: Rarity.UltraRare,
+                gender: Gender.Female,
+                path: "traits/female/clothes/yukata_purple.png"
             }
         ]
     },
@@ -549,7 +558,7 @@ export const traitsJSON : ITraitType[] = [
             {
                 name: "Hanafuda",
                 probability: 5,
-                rarity_threshold: Rarity.Epic,
+                rarity_threshold: Rarity.UltraRare,
                 gender: Gender.Unisex,
                 path: "traits/unisex/earrings/hanafuda.png"
             }, 
@@ -571,15 +580,15 @@ export const traitsJSON : ITraitType[] = [
                 name: "Bandage",
                 probability: 5,
                 rarity_threshold: Rarity.Rare,
-                gender: Gender.Unisex,
-                path: "traits/unisex/face_accessory/bandage.png"
+                gender: Gender.Male,
+                path: "traits/male/face_accessory/bandage.png"
             }, 
             {
                 name: "Eyepatch",
                 probability: 5,
-                rarity_threshold: Rarity.Epic,
-                gender: Gender.Unisex,
-                path: "traits/unisex/face_accessory/eyepatch.png"
+                rarity_threshold: Rarity.UltraRare,
+                gender: Gender.Male,
+                path: "traits/male/face_accessory/eyepatch.png"
             }, 
             {
                 name: "None",
@@ -587,7 +596,21 @@ export const traitsJSON : ITraitType[] = [
                 rarity_threshold: Rarity.Common,
                 gender: Gender.Unisex,
                 path: "traits/none.png"
-            }
+            },
+            {
+                name: "Bandage",
+                probability: 5,
+                rarity_threshold: Rarity.Rare,
+                gender: Gender.Female,
+                path: "traits/female/face_accessory/bandage.png"
+            }, 
+            {
+                name: "Joker Mask",
+                probability: 5,
+                rarity_threshold: Rarity.UltraRare,
+                gender: Gender.Female,
+                path: "traits/female/face_accessory/joker_mask.png"
+            }   
         ],
     },
     {
@@ -628,14 +651,14 @@ export const traitsJSON : ITraitType[] = [
                 probability: 20,
                 rarity_threshold: Rarity.Rare,
                 gender: Gender.Female,
-                path: "traits/male/hair/bonnet.png"
+                path: "traits/female/hair/bonnet.png"
             }, 
             {
                 name: "Ponytail",
                 probability: 20,
                 rarity_threshold: Rarity.Common,
-                gender: Gender.Male,
-                path: "traits/male/hair/ponytail.png"
+                gender: Gender.Female,
+                path: "traits/female/hair/ponytail.png"
             }
         ]
     },
@@ -663,13 +686,6 @@ export const traitsJSON : ITraitType[] = [
                 probability: 100,
                 rarity_threshold: Rarity.Common,
                 gender: Gender.Unisex,
-                path: "traits/none.png"
-            },
-            {
-                name: "None",
-                probability: 100,
-                rarity_threshold: Rarity.Common,
-                gender: Gender.Female,
                 path: "traits/none.png"
             }
         ]

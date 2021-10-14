@@ -52,7 +52,7 @@ const Display = ({imageLayers, generateRandomAvatar, clearCanvas} : DisplayProps
                 <RainbowButton onClick={generateRandomAvatar}>
                     Random Avatar
                 </RainbowButton>
-                <Button size="small" background="black" onClick={clearCanvas}>
+                <Button size="small" color='red' background="black" onClick={clearCanvas}>
                     Clear
                 </Button>
             </DisplayActions>

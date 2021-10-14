@@ -29,9 +29,11 @@ class Trait implements ITrait{
 
 class IkiruAvatar {
     traits: Trait[]
+    gender: Gender
 
-    constructor(traits = []) {
+    constructor(traits = [], gender : Gender) {
         this.traits = traits;
+        this.gender = gender;
     }
 
     addTrait = (trait: Trait) => {
@@ -71,26 +73,34 @@ const FactorySection = ({avatar} : FactorySectionProps) => {
             onTraitTypeClick(1)
         } 
     }
-    
-    useEffect(() => {
-        console.log('Gender switched to: ' + Gender[gender]);
-    },[gender]) 
 
     useEffect(() => {
         window.addEventListener('keyup', onKeyup);
         return () => window.removeEventListener('keyup', onKeyup);
     }, [onKeyup])
+    
+    useEffect(() => {
+        const newLayers = [...initializedLayers];
+        newLayers[0] = traitsJSON[0].traits[0];
+        setImageLayers([...newLayers]);
+        setActiveTraitType(0);
+        setActiveTrait(0);
+    },[gender]) 
 
     useEffect(() => {
         let imageLayersCopy = [...imageLayers];
-        imageLayersCopy[activeTraitType] = traitsJSON[activeTraitType].traits[activeTrait];
+        imageLayersCopy[activeTraitType] = traitsJSONGenderFiltered[activeTrait];
         setImageLayers(imageLayersCopy);
     }, [activeTrait])
 
-    useEffect(() => {
-        setActiveTrait(
-            imageLayers[activeTraitType] === null ? 
-            0 : traitsJSON[activeTraitType].traits.findIndex((ele) => ele.name + ele.gender.toString() === imageLayers[activeTraitType]!.name + imageLayers[activeTraitType]!.gender.toString()));
+    useEffect(() => {        
+        if (imageLayers[activeTraitType] === null) {
+            setActiveTrait(0);
+        } else {
+            setActiveTrait(traitsJSONGenderFiltered.findIndex(
+                (ele) => ele.path === imageLayers[activeTraitType]!.path)
+            )
+        }
     }, [activeTraitType])
 
     const generateRandomAvatar = () => {
@@ -99,34 +109,32 @@ const FactorySection = ({avatar} : FactorySectionProps) => {
 
         for(let i = 0; i < traitsJSON.length; i++) {
             let traitType: ITraitType = traitsJSON[i];
-            let possibleCandidates : (ITrait | null)[] = [...traitType.traits];
+            let possibleCandidates : (ITrait | null)[] = [...traitType.traits].filter(trait => trait.gender === gender || trait.gender === Gender.Unisex);
             let randomIndex = random(0, possibleCandidates.length - 1);
             activeTrait = randomIndex;
             let chosen = possibleCandidates[randomIndex] as (null | ITrait);
             randomizedLayers.push(chosen)
         }
 
-        console.log(activeTrait)
-        console.log(randomizedLayers);
         setActiveTrait(activeTrait);
         setImageLayers([...randomizedLayers]);
+    }
+
+    const generateRandomTrait = () => {
+        const lastPossIndex = traitsJSONGenderFiltered.length - 1;
+        let randomIndex = activeTrait;
+        while (randomIndex === activeTrait && traitsJSONGenderFiltered.length > 1) {
+            randomIndex = random(0, lastPossIndex);
+        }
+        setActiveTrait(randomIndex);
     }
 
     const clickTrait = (position: number) => {
         setActiveTrait(position);
     }
 
-    const generateRandomTrait = () => {
-        const lastPossIndex = traitsJSON[activeTraitType].traits.length - 1;
-        let randomIndex = activeTrait;
-        while (randomIndex === activeTrait && traitsJSON[activeTraitType].traits.length > 1) {
-            randomIndex = random(0, lastPossIndex);
-        }
-        setActiveTrait(randomIndex);
-    }
-
     const onArrowClick = (direction: number) => {
-        setActiveTrait(prevIndex => calculateNewIndex(direction, prevIndex, traitsJSON[activeTraitType].traits));
+        setActiveTrait(prevIndex => calculateNewIndex(direction, prevIndex, traitsJSONGenderFiltered));
     }
 
     const onTraitTypeClick = (direction: number) => {
@@ -141,7 +149,7 @@ const FactorySection = ({avatar} : FactorySectionProps) => {
         setImageLayers([...initializedLayers]);
     }
 
-    const traitsJSONFiltered = traitsJSON[activeTraitType].traits.filter(trait => trait.gender === gender || trait.gender === Gender.Unisex)
+    const traitsJSONGenderFiltered = traitsJSON[activeTraitType].traits.filter(trait => trait.gender === gender || trait.gender === Gender.Unisex)
 
     return (
         <Wrapper>
@@ -166,7 +174,6 @@ const FactorySection = ({avatar} : FactorySectionProps) => {
                                 </AnimateSharedLayout>
                             </GenderSection>
                             <TraitTypesSection 
-                            
                                 imageLayers={imageLayers} 
                                 activeTraitType={activeTraitType} 
                                 clickTraitType={clickTraitType}  
@@ -255,6 +262,7 @@ const GenderSelection = styled.div<{title: string}>`
     display: flex;
     border-radius: .5rem;
     overflow: hidden;
+    box-shadow: var(--shadow-m);
     margin: 0;
     padding: 4px;
     transition: all 300ms ease-out;

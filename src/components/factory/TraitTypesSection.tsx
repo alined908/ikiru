@@ -12,7 +12,7 @@ const TraitTypesSection = ({imageLayers, activeTraitType, clickTraitType} : Trai
         <TraitTypes>
             {traitsJSON.map((traitType: ITraitType, index: number) => 
                 <TraitType 
-                    key={traitType.layer} 
+                    key={index} 
                     onClick={() => clickTraitType(index)} 
                     active={activeTraitType === index}
                 >

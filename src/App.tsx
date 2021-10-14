@@ -28,14 +28,12 @@ import FAQSection from "./sections/FAQSection";
 import RoadMapSection from "./sections/RoadmapSection"
 import { BrowserRouter as Router,Switch,Route,Link, useLocation} from "react-router-dom";
 import { Sakura } from './sections/FAQSection';
-import { throttle } from "lodash";
 import SocialMediaComponent from "./components/social/SocialMedia";
 
-
+const network = process.env.REACT_APP_SOLANA_NETWORK as WalletAdapterNetwork;
 const treasury = new anchor.web3.PublicKey(process.env.REACT_APP_TREASURY_ADDRESS!);
 const config = new anchor.web3.PublicKey( process.env.REACT_APP_CANDY_MACHINE_CONFIG!);
 const candyMachineId = new anchor.web3.PublicKey(process.env.REACT_APP_CANDY_MACHINE_ID!);
-const network = process.env.REACT_APP_SOLANA_NETWORK as WalletAdapterNetwork;
 const rpcHost = process.env.REACT_APP_SOLANA_RPC_HOST!;
 const connection = new anchor.web3.Connection(rpcHost);
 const startDateSeed = parseInt(process.env.REACT_APP_CANDY_START_DATE!, 10);
@@ -51,7 +49,7 @@ const Logo = styled.div`
   display: flex;
   align-items: center;
   font-size: 2.2rem;
-  font-weight: bold;
+  font-weight: 800;
 
   &:hover {
     color: pink;
@@ -66,13 +64,15 @@ const NavigationTabs = styled.div`
 const NavigationTab = styled.div`
   display: flex;
   padding: 2rem;
-  font-weight: bold;
-  font-size: 1.2rem;
+  font-weight: 800;
+  font-size: 1.5rem;
 `
 
 const LandingWrapper = styled.div`
   display: flex;
   height: 100vh;
+  justify-content: center;
+  align-items: center;
 `
 
 const CommunityBannerWrapper = styled.div`
@@ -111,25 +111,25 @@ interface WrappedHeaderProps {
 
 const WrappedHeader = styled.div<WrappedHeaderProps>`
   display: flex;
-  background: ${props => props.isHome ? "black" : "transparent"};
-  
+  position: absolute;
+  top:0;
   width: 100%;
   margin: 0 auto;
-  padding: 2rem 0;
+  padding: 1rem 0;
   justify-content: space-between;
   z-index: 10;
   
 
   a {
     
-    color: ${props => props.isHome ? "rgb(240, 240, 240)" : "black"};
+    color: black;
     &:hover {
       transition: all .33s ease;
       color: pink;
     }
 
     div {
-      fill: ${props => props.isHome ? "rgb(240, 240, 240)" : "black"};
+      fill: "black";
 
       &:hover {
         transition: all .33s ease;
@@ -153,15 +153,34 @@ const NavActionBar = styled.div`
   align-items: center;
 `
 
+const LandingSplash = styled.div`
+  display: block;
+  width: auto;
+  height: auto;
+  background: wheat;
+`
+
+const LandingImage = styled.img`
+  height: auto;
+`
+
+const NavLink = styled(Link)`
+  transition: all .2s ease;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+`
+
 const quickNodeEndpoint = 'https://spring-wispy-firefly.solana-devnet.quiknode.pro/eb692f52d5469705a1a6f6c80f719b2b4dedefe0/';
 
 const Landing = ({children} : any) => {
 
-
   return (
     <LandingWrapper>
-      <div>
-      </div>
+      <LandingSplash>
+        <LandingImage src="./backgrounds/landing.png"/>
+      </LandingSplash>
     </LandingWrapper>
   )
 }
@@ -198,25 +217,25 @@ const Header = () => {
     })();
   }, [wallet, connection]);
 
-  function handleScroll() {
-    const header = document.getElementById('header');
+  // function handleScroll() {
+  //   const header = document.getElementById('header');
 
-    if (window.pageYOffset > 0) {
-      header?.classList.add("sticky")
-    } else {
-      header?.classList.remove('sticky');
-    }
-  }
+  //   if (window.pageYOffset > 0) {
+  //     header?.classList.add("sticky")
+  //   } else {
+  //     header?.classList.remove('sticky');
+  //   }
+  // }
 
-  const throttledHandler = useMemo(() => throttle(handleScroll, 300), []);
+  // const throttledHandler = useMemo(() => throttle(handleScroll, 300), []);
 
-  useEffect(() => {  
-    window.addEventListener('scroll', throttledHandler);
+  // useEffect(() => {  
+  //   window.addEventListener('scroll', throttledHandler);
 
-    return () => {
-      window.removeEventListener("scroll", throttledHandler);
-    };
-  }, [])
+  //   return () => {
+  //     window.removeEventListener("scroll", throttledHandler);
+  //   };
+  // }, [])
 
   return (
     <WrappedHeader id="header" isHome={location.pathname === '/'}>
@@ -230,13 +249,13 @@ const Header = () => {
         <Navigation>
           <NavigationTabs>
             <NavigationTab>
-              <Link to="/mint">Mint</Link>
+              <NavLink to="/random">Create</NavLink>
             </NavigationTab>
             <NavigationTab>
-              <Link to="/display">Display</Link>
+              <NavLink to="/mint">Mint</NavLink>
             </NavigationTab>
             <NavigationTab>
-              <Link to="/random">Factory</Link>
+              <NavLink to="/display">Display</NavLink>
             </NavigationTab>
           </NavigationTabs>
         </Navigation>

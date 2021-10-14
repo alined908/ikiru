@@ -53,8 +53,9 @@ const TraitWrapper = styled.div<TraitWrapperProps>`
     border-radius: .5rem;
     transition: all .25s ease;
     cursor: pointer;
-    background: white;
-    box-shadow: ${props => rarityColor[props.rarity]};
+    color: ${props => rarityColor[props.rarity]};
+    background: transparent;
+    box-shadow: 0rem 0.1rem .5rem ${props => rarityColor[props.rarity]};
 `
 
 const TraitImageWrapper = styled.div`
@@ -75,10 +76,10 @@ const TraitDescription = styled.div`
     justify-content: space-between;
     padding: .75rem 1rem;
     background: black;
-    color: rgb(250, 250, 250, .97);
     border-bottom-right-radius: .5rem;
     border-bottom-left-radius: .5rem;
     overflow: hidden;
+    
     
 `
 
