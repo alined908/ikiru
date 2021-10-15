@@ -30,6 +30,60 @@ export interface ITrait {
     path: string
 }
 
+export class TraitType implements ITraitType {
+    name: string
+    canBeNull: boolean
+    layer: number
+    traits: Trait[]
+
+    constructor({name, canBeNull, layer, traits} : ITraitType) {
+        this.name = name;
+        this.canBeNull = canBeNull;
+        this.layer = layer;
+        this.traits = traits;
+    }
+
+    traitsFilteredByGender(gender: Gender) : Trait[] {
+        //Filter by gender
+        //Return traits
+        return this.traits.filter(trait => trait.gender === gender || trait.gender === Gender.Unisex)
+    }
+}
+
+export class Trait implements ITrait{
+    name: string
+    probability: number
+    rarity_threshold: Rarity
+    gender: Gender
+    path: string
+
+    constructor({name, probability, rarity_threshold, gender, path} : ITrait) {
+        this.name = name;
+        this.probability = probability;
+        this.rarity_threshold = rarity_threshold;
+        this.gender = gender;
+        this.path = path;
+    }
+}
+
+export class IkiruAvatar {
+    traits: Trait[]
+    gender: Gender
+
+    constructor(traits : Trait[], gender : Gender) {
+        this.traits = traits;
+        this.gender = gender;
+    }
+
+    addTrait = (trait: Trait) => {
+        this.traits.push(trait);
+    }
+
+    assignRarityScore = () => {
+        //
+    }
+}
+
 export const rarityColor = {
     [Rarity.Common]: 'rgb(128,70,27)',
     [Rarity.Uncommon]: 'rgb(0,128,0)',
@@ -50,644 +104,364 @@ export const traitTypes = [
     'Head Accessory'
 ]
 
-// export const femaleTraitsJSON : ITraitType[] = [
-//     {
-//         name: "Background",
-//         canBeNull: false,
-//         layer: 0,
-//         traits: [
-//             {
-//                 name: "Night Sky",
-//                 probability: 2.5,
-//                 rarity_threshold: Rarity.Epic,
-//                 gender: Gender.Unisex,
-//                 path: "traits/unisex/backgrounds/night_sky.png"
-//             },
-//             {
-//                 name: "Green Sakura",
-//                 probability: 2.5,
-//                 rarity_threshold: Rarity.Epic,
-//                 gender: Gender.Unisex,
-//                 path: "traits/unisex/backgrounds/sakura_green.png"
-//             },
-//             {
-//                 name: "Solana Seigaha",
-//                 probability: 2.5,
-//                 rarity_threshold: Rarity.Epic,
-//                 gender: Gender.Unisex,
-//                 path: "traits/unisex/backgrounds/seigaha_solana.png"
-//             },
-//             {
-//                 name: "Red Square",
-//                 probability: 2.5,
-//                 rarity_threshold: Rarity.Epic,
-//                 gender: Gender.Unisex,
-//                 path: "traits/unisex/backgrounds/square_red.png"
-//             },
-//             {
-//                 name: "Red Yagasuri",
-//                 probability: 5,
-//                 rarity_threshold: Rarity.Common,
-//                 gender: Gender.Unisex,
-//                 path: "traits/unisex/backgrounds/yagasuri_red.png"
-//             },
-//         ]
-//     },
-//     {
-//         name: "Skin",
-//         canBeNull: false,
-//         layer: 1,
-//         traits: [
-//             {
-//                 name: "Pale",
-//                 probability: 33,
-//                 rarity_threshold: Rarity.Common,
-//                 gender: Gender.Female,
-//                 path: "traits/female/body/pale.png"
-//             }
-//         ]
-//     },
-//     {
-//         name: "Neck",
-//         canBeNull: true,
-//         layer: 2,
-//         traits: [
-//             {
-//                 name: "None",
-//                 probability: 100,
-//                 rarity_threshold: Rarity.Common,
-//                 gender: Gender.Female,
-//                 path: "traits/none.png"
-//             }
-//         ]
-//     },
-//     {
-//         name: "Clothes",
-//         canBeNull: true,
-//         layer: 3,
-//         traits: [ 
-//             {
-//                 name: "Orange Bomber",
-//                 probability: 7.5,
-//                 rarity_threshold: Rarity.Rare,
-//                 gender: Gender.Female,
-//                 path: "traits/female/clothes/bomber_orange.png"
-//             },
-//             {
-//                 name: "Pink T-Shirt",
-//                 probability: 10,
-//                 rarity_threshold: Rarity.Common,
-//                 gender: Gender.Female,
-//                 path: "traits/female/clothes/tshirt_pink.png"
-//             },
-//             {
-//                 name: "Uniform",
-//                 probability: 7.5,
-//                 rarity_threshold: Rarity.Epic,
-//                 gender: Gender.Female,
-//                 path: "traits/female/clothes/uniform.png"
-//             },
-//             {
-//                 name: "Collar Shirt",
-//                 probability: 7.5,
-//                 rarity_threshold: Rarity.Epic,
-//                 gender: Gender.Female,
-//                 path: "traits/female/clothes/collar_shirt.png"
-//             },
-//             {
-//                 name: "Purple Yukata",
-//                 probability: 5,
-//                 rarity_threshold: Rarity.Epic,
-//                 gender: Gender.Female,
-//                 path: "traits/female/clothes/yukata_purple.png"
-//             }
-//         ]
-//     },
-//     {
-//         name: "Expression",
-//         canBeNull: false,
-//         layer: 4,
-//         traits: [
-//             {
-//                 name: "Open",
-//                 probability: 33,
-//                 rarity_threshold: Rarity.Common,
-//                 gender: Gender.Female,
-//                 path: "traits/female/expression/open.png"
-//             }, 
-//             {
-//                 name: "Smile",
-//                 probability: 33,
-//                 rarity_threshold: Rarity.Common,
-//                 gender: Gender.Female,
-//                 path: "traits/female/expression/smile.png"
-//             }, 
-//         ]
-//     },
-//     {   
-//         name: "Earring",
-//         canBeNull: true,
-//         layer: 5,
-//         traits: [
-//             {
-//                 name: "Cross",
-//                 probability: 7.5,
-//                 rarity_threshold: Rarity.Rare,
-//                 gender: Gender.Unisex,
-//                 path: "traits/unisex/earrings/cross.png"
-//             }, 
-//             {
-//                 name: "Pearl",
-//                 probability: 7.5,
-//                 rarity_threshold: Rarity.Rare,
-//                 gender: Gender.Unisex,
-//                 path: "traits/unisex/earrings/pearl_earring.png"
-//             }, 
-//             {
-//                 name: "Hanafuda",
-//                 probability: 5,
-//                 rarity_threshold: Rarity.Epic,
-//                 gender: Gender.Unisex,
-//                 path: "traits/unisex/earrings/hanafuda.png"
-//             }, 
-//             {
-//                 name: "None",
-//                 probability: 100,
-//                 rarity_threshold: Rarity.Common,
-//                 gender: Gender.Unisex,
-//                 path: "traits/none.png"
-//             }
-//         ]
-//     },
-//     {
-//         name: "Face Accessory",
-//         canBeNull: true,
-//         layer: 6,
-//         traits: [
-//             {
-//                 name: "Bandage",
-//                 probability: 5,
-//                 rarity_threshold: Rarity.Rare,
-//                 gender: Gender.Unisex,
-//                 path: "traits/unisex/face_accessory/bandage.png"
-//             }, 
-//             {
-//                 name: "Eyepatch",
-//                 probability: 5,
-//                 rarity_threshold: Rarity.Epic,
-//                 gender: Gender.Unisex,
-//                 path: "traits/unisex/face_accessory/eyepatch.png"
-//             }, 
-//             {
-//                 name: "None",
-//                 probability: 100,
-//                 rarity_threshold: Rarity.Common,
-//                 gender: Gender.Unisex,
-//                 path: "traits/none.png"
-//             }
-//         ],
-//     },
-//     {
-//         name: "Hair",
-//         canBeNull: false,
-//         layer: 7,
-//         traits: [
-//             {
-//                 name: "Parted",
-//                 probability: 20,
-//                 rarity_threshold: Rarity.Rare,
-//                 gender: Gender.Male,
-//                 path: "traits/male/hair/parted.png"
-//             }, 
-//             {
-//                 name: "Parted 2",
-//                 probability: 20,
-//                 rarity_threshold: Rarity.Rare,
-//                 gender: Gender.Male,
-//                 path: "traits/male/hair/parted2.png"
-//             }, 
-//             {
-//                 name: "Short",
-//                 probability: 20,
-//                 rarity_threshold: Rarity.Common,
-//                 gender: Gender.Male,
-//                 path: "traits/male/hair/short.png"
-//             },
-//             {
-//                 name: "Long",
-//                 probability: 20,
-//                 rarity_threshold: Rarity.Rare,
-//                 gender: Gender.Female,
-//                 path: "traits/female/hair/long.png"
-//             }, 
-//             {
-//                 name: "Bonnet",
-//                 probability: 20,
-//                 rarity_threshold: Rarity.Rare,
-//                 gender: Gender.Female,
-//                 path: "traits/male/hair/bonnet.png"
-//             }, 
-//             {
-//                 name: "Ponytail",
-//                 probability: 20,
-//                 rarity_threshold: Rarity.Common,
-//                 gender: Gender.Male,
-//                 path: "traits/male/hair/ponytail.png"
-//             }
-//         ]
-//     },
-//     {
-//         name: "Head Accessory",
-//         canBeNull: true,
-//         layer: 8,
-//         traits: [
-//             {
-//                 name: "Fox Mask",
-//                 probability: 5,
-//                 rarity_threshold: Rarity.Common,
-//                 gender: Gender.Male,
-//                 path: "traits/male/head_accessory/fox_mask.png"
-//             },
-//             {
-//                 name: "Fox Mask",
-//                 probability: 5,
-//                 rarity_threshold: Rarity.Common,
-//                 gender: Gender.Female,
-//                 path: "traits/female/head_accessory/fox_mask.png"
-//             },
-//             {
-//                 name: "None",
-//                 probability: 100,
-//                 rarity_threshold: Rarity.Common,
-//                 gender: Gender.Unisex,
-//                 path: "traits/none.png"
-//             },
-//             {
-//                 name: "None",
-//                 probability: 100,
-//                 rarity_threshold: Rarity.Common,
-//                 gender: Gender.Female,
-//                 path: "traits/none.png"
-//             }
-//         ]
-//     }
-// ]
-
-export const traitsJSON : ITraitType[] = [
-    {
+export const traitsJSON : TraitType[] = [
+    new TraitType({
         name: "Background",
         canBeNull: false,
         layer: 0,
         traits: [
-            {
+            new Trait({
                 name: "Night Sky",
                 probability: 2.5,
                 rarity_threshold: Rarity.UltraRare,
                 gender: Gender.Unisex,
                 path: "traits/unisex/backgrounds/night_sky.png"
-            },
-            {
+            }),
+            new Trait({
                 name: "Green Sakura",
                 probability: 2.5,
                 rarity_threshold: Rarity.UltraRare,
                 gender: Gender.Unisex,
                 path: "traits/unisex/backgrounds/sakura_green.png"
-            },
-            {
+            }),
+            new Trait({
                 name: "Solana Seigaha",
                 probability: 2.5,
                 rarity_threshold: Rarity.UltraRare,
                 gender: Gender.Unisex,
                 path: "traits/unisex/backgrounds/seigaha_solana.png"
-            },
-            {
+            }),
+            new Trait({
                 name: "Red Square",
                 probability: 2.5,
                 rarity_threshold: Rarity.UltraRare,
                 gender: Gender.Unisex,
                 path: "traits/unisex/backgrounds/square_red.png"
-            },
-            {
+            }),
+            new Trait({
                 name: "Red Yagasuri",
                 probability: 5,
                 rarity_threshold: Rarity.Common,
                 gender: Gender.Unisex,
                 path: "traits/unisex/backgrounds/yagasuri_red.png"
-            },
+            }),
         ]
-    },
-    {
+    }),
+    new TraitType({
         name: "Skin",
         canBeNull: false,
         layer: 1,
         traits: [
-            {
+            new Trait({
                 name: "Pale",
                 probability: 33,
                 rarity_threshold: Rarity.Common,
                 gender: Gender.Male,
                 path: "traits/male/body/pale.png"
-            },
-            {
+            }),
+            new Trait({
                 name: "Tan",
                 probability: 33,
                 rarity_threshold: Rarity.Common,
                 gender: Gender.Male,
                 path: "traits/male/body/tan.png"
-            },
-            {
+            }),
+            new Trait({
                 name: "Pale",
                 probability: 33,
                 rarity_threshold: Rarity.Common,
                 gender: Gender.Female,
                 path: "traits/female/body/pale.png"
-            },
-            {
+            }),
+            new Trait({
                 name: "Tan",
                 probability: 33,
                 rarity_threshold: Rarity.Common,
                 gender: Gender.Female,
                 path: "traits/female/body/tan.png"
-            },
+            }),
         ]
-    },
-    {
+    }),
+    new TraitType({
         name: "Neck",
         canBeNull: true,
         layer: 2,
         traits: [
-            {
+            new Trait({
                 name: "Tattoo",
                 probability: 33,
                 rarity_threshold: Rarity.Common,
                 gender: Gender.Male,
                 path: "traits/male/neck/tattoo.png"
-            }, {
+            }), 
+            new Trait({
                 name: "None",
                 probability: 33,
                 rarity_threshold: Rarity.Common,
                 gender: Gender.Unisex,
                 path: "traits/none.png"
-            }
+            })
         ]
-    },
-    {
+    }),
+    new TraitType({
         name: "Clothes",
         canBeNull: true,
         layer: 3,
         traits: [
-            {
+            new Trait({
                 name: "Purple Bomber",
                 probability: 7.5,
                 rarity_threshold: Rarity.Rare,
                 gender: Gender.Male,
                 path: "traits/male/clothes/bomber_purple.png"
-            }, 
-            {
+            }), 
+            new Trait({
                 name: "Orange Bomber",
                 probability: 7.5,
                 rarity_threshold: Rarity.Rare,
                 gender: Gender.Female,
                 path: "traits/female/clothes/bomber_orange.png"
-            },
-            {
+            }),
+            new Trait({
                 name: "Yellow T-Shirt",
                 probability: 10,
                 rarity_threshold: Rarity.Common,
                 gender: Gender.Male,
                 path: "traits/male/clothes/tshirt_yellow.png"
-            },
-            {
+            }),
+            new Trait({
                 name: "Pink T-Shirt",
                 probability: 10,
                 rarity_threshold: Rarity.Common,
                 gender: Gender.Female,
                 path: "traits/female/clothes/tshirt_pink.png"
-            },
-            {
+            }),
+            new Trait({
                 name: "Uniform",
                 probability: 7.5,
                 rarity_threshold: Rarity.UltraRare,
                 gender: Gender.Male,
                 path: "traits/male/clothes/uniform.png"
-            },
-            {
+            }),
+            new Trait({
                 name: "Uniform",
                 probability: 7.5,
                 rarity_threshold: Rarity.UltraRare,
                 gender: Gender.Female,
                 path: "traits/female/clothes/uniform.png"
-            },
-            {
+            }),
+            new Trait({
                 name: "Blue Yukata",
                 probability: 5,
                 rarity_threshold: Rarity.UltraRare,
                 gender: Gender.Male,
                 path: "traits/male/clothes/yukata_blue.png"
-            },
-            {
+            }),
+            new Trait({
                 name: "Purple Yukata",
                 probability: 5,
                 rarity_threshold: Rarity.UltraRare,
                 gender: Gender.Female,
                 path: "traits/female/clothes/yukata_purple.png"
-            }
+            })
         ]
-    },
-    {
+    }),
+    new TraitType({
         name: "Expression",
         canBeNull: false,
         layer: 4,
         traits: [
-            {
+            new Trait({
                 name: "Frown",
                 probability: 33,
                 rarity_threshold: Rarity.Common,
                 gender: Gender.Male,
                 path: "traits/male/expression/frown.png"
-            }, 
-            {
+            }), 
+            new Trait({
                 name: "Smile",
                 probability: 33,
                 rarity_threshold: Rarity.Common,
                 gender: Gender.Male,
                 path: "traits/male/expression/smile.png"
-            }, 
-            {
+            }), 
+            new Trait({
                 name: "Smirk",
                 probability: 33,
                 rarity_threshold: Rarity.Common,
                 gender: Gender.Male,
                 path: "traits/male/expression/smirk.png"
-            }, 
-            {
+            }), 
+            new Trait({
                 name: "Open",
                 probability: 33,
                 rarity_threshold: Rarity.Common,
                 gender: Gender.Female,
                 path: "traits/female/expression/open.png"
-            }, 
-            {
+            }), 
+            new Trait({
                 name: "Smile",
                 probability: 33,
                 rarity_threshold: Rarity.Common,
                 gender: Gender.Female,
                 path: "traits/female/expression/smile.png"
-            }, 
+            }), 
         ]
-    },
-    {   
+    }),
+    new TraitType({   
         name: "Earring",
         canBeNull: true,
         layer: 5,
         traits: [
-            {
+            new Trait({
                 name: "Cross",
                 probability: 7.5,
                 rarity_threshold: Rarity.Rare,
                 gender: Gender.Unisex,
                 path: "traits/unisex/earrings/cross.png"
-            }, 
-            {
+            }), 
+            new Trait({
                 name: "Pearl",
                 probability: 7.5,
                 rarity_threshold: Rarity.Rare,
                 gender: Gender.Unisex,
                 path: "traits/unisex/earrings/pearl_earring.png"
-            }, 
-            {
+            }), 
+            new Trait({
                 name: "Hanafuda",
                 probability: 5,
                 rarity_threshold: Rarity.UltraRare,
                 gender: Gender.Unisex,
                 path: "traits/unisex/earrings/hanafuda.png"
-            }, 
-            {
+            }), 
+            new Trait({
                 name: "None",
                 probability: 100,
                 rarity_threshold: Rarity.Common,
                 gender: Gender.Unisex,
                 path: "traits/none.png"
-            }
+            })
         ]
-    },
-    {
+    }),
+    new TraitType({
         name: "Face Accessory",
         canBeNull: true,
         layer: 6,
         traits: [
-            {
+            new Trait({
                 name: "Bandage",
                 probability: 5,
                 rarity_threshold: Rarity.Rare,
                 gender: Gender.Male,
                 path: "traits/male/face_accessory/bandage.png"
-            }, 
-            {
+            }), 
+            new Trait({
                 name: "Eyepatch",
                 probability: 5,
                 rarity_threshold: Rarity.UltraRare,
                 gender: Gender.Male,
                 path: "traits/male/face_accessory/eyepatch.png"
-            }, 
-            {
+            }), 
+            new Trait({
                 name: "None",
                 probability: 100,
                 rarity_threshold: Rarity.Common,
                 gender: Gender.Unisex,
                 path: "traits/none.png"
-            },
-            {
+            }),
+            new Trait({
                 name: "Bandage",
                 probability: 5,
                 rarity_threshold: Rarity.Rare,
                 gender: Gender.Female,
                 path: "traits/female/face_accessory/bandage.png"
-            }, 
-            {
+            }), 
+            new Trait({
                 name: "Joker Mask",
                 probability: 5,
                 rarity_threshold: Rarity.UltraRare,
                 gender: Gender.Female,
                 path: "traits/female/face_accessory/joker_mask.png"
-            }   
+            }) 
         ],
-    },
+    }),
+    new TraitType(
     {
         name: "Hair",
         canBeNull: false,
         layer: 7,
         traits: [
-            {
+            new Trait({
                 name: "Parted",
                 probability: 20,
                 rarity_threshold: Rarity.Rare,
                 gender: Gender.Male,
                 path: "traits/male/hair/parted.png"
-            }, 
-            {
+            }), 
+            new Trait({
                 name: "Parted 2",
                 probability: 20,
                 rarity_threshold: Rarity.Rare,
                 gender: Gender.Male,
                 path: "traits/male/hair/parted2.png"
-            }, 
-            {
+            }), 
+            new Trait({
                 name: "Short",
                 probability: 20,
                 rarity_threshold: Rarity.Common,
                 gender: Gender.Male,
                 path: "traits/male/hair/short.png"
-            },
-            {
+            }),
+            new Trait({
                 name: "Long",
                 probability: 20,
                 rarity_threshold: Rarity.Rare,
                 gender: Gender.Female,
                 path: "traits/female/hair/long.png"
-            }, 
-            {
+            }), 
+            new Trait({
                 name: "Bonnet",
                 probability: 20,
                 rarity_threshold: Rarity.Rare,
                 gender: Gender.Female,
                 path: "traits/female/hair/bonnet.png"
-            }, 
-            {
+            }), 
+            new Trait({
                 name: "Ponytail",
                 probability: 20,
                 rarity_threshold: Rarity.Common,
                 gender: Gender.Female,
                 path: "traits/female/hair/ponytail.png"
-            }
+            })
         ]
-    },
-    {
+    }),
+    new TraitType({
         name: "Head Accessory",
         canBeNull: true,
         layer: 8,
         traits: [
+            new Trait(
             {
                 name: "Fox Mask",
                 probability: 5,
                 rarity_threshold: Rarity.Common,
                 gender: Gender.Male,
                 path: "traits/male/head_accessory/fox_mask.png"
-            },
-            {
+            }),
+            new Trait({
                 name: "Fox Mask",
                 probability: 5,
                 rarity_threshold: Rarity.Common,
                 gender: Gender.Female,
                 path: "traits/female/head_accessory/fox_mask.png"
-            },
-            {
+            }),
+            new Trait({
                 name: "None",
                 probability: 100,
                 rarity_threshold: Rarity.Common,
                 gender: Gender.Unisex,
                 path: "traits/none.png"
-            }
+            })
         ]
-    }
+    })
 ]

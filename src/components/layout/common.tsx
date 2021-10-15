@@ -3,6 +3,7 @@ import {useEffect, useRef, useState, MutableRefObject} from 'react';
 import styled from 'styled-components';
 import { chooseRandomSakura, Sakura } from '../../sections/FAQSection';
 import VanillaTilt from 'vanilla-tilt';
+import { Link } from 'react-router-dom';
 
 export const Main = styled.div`
   display: flex;
@@ -117,15 +118,16 @@ export const AvatarImage = styled.img`
     height: 100%;
 `
 
-export const Avatar = ({image, width, height} : any) => {
+export const Avatar = ({image, width, height, ikiruAvatar} : any) => {
 
     return (
-        <Tilt options={tiltOptions}>
-            <AvatarWrapper width={width} height={height}>
-                <AvatarImage src={`./avatars/${image}.png`}/>
-            </AvatarWrapper>
-        </Tilt>
-        
+        <Link to={{pathname: '/create', state: {ikiruAvatar: JSON.stringify(ikiruAvatar)}}}>
+            <Tilt options={tiltOptions}>
+                <AvatarWrapper width={width} height={height}>
+                    <AvatarImage src={`./avatars/${image}.png`}/>
+                </AvatarWrapper>
+            </Tilt>
+        </Link>
     )
 }
 

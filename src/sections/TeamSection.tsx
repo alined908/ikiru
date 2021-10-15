@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import {Header, Wrapper, Content} from '../components/layout/common';
 import SocialMediaComponent from '../components/social/SocialMedia';
 import { Avatar } from '../components/layout/common';
+import {Gender, Trait, IkiruAvatar, traitsJSON} from '../constants';
 
 const Description = styled.div`
     display: flex;
@@ -35,6 +36,25 @@ const InfoRow = styled.div`
     justify-content: space-between;
 `
 
+//Todo - Remap words -> posiiton
+
+const danielTraits : Trait[] = [
+    traitsJSON[0].traits[0], 
+    traitsJSON[1].traits[0],
+    traitsJSON[2].traits[1],
+    traitsJSON[3].traits[2],
+    traitsJSON[4].traits[1],
+    traitsJSON[5].traits[3],
+    traitsJSON[6].traits[2],
+    traitsJSON[7].traits[0],
+    traitsJSON[8].traits[2]
+] 
+const aaronTraits: Trait[] = []
+const steveTraits: Trait[] = []
+const daniel = new IkiruAvatar(danielTraits, Gender.Male);
+const aaron = new IkiruAvatar(danielTraits, Gender.Male);
+const steve = new IkiruAvatar(danielTraits, Gender.Male);
+
 const TeamSection = () => {
     return (
       <Wrapper>
@@ -42,7 +62,7 @@ const TeamSection = () => {
         <Content>
             <Team>
                 <MemberWrapper>
-                    <Avatar image="ikura_1"/>
+                    <Avatar ikiruAvatar={daniel} image="ikura_1"/>
                     <MemberDescription>
                         <InfoRow>
                             <h2>
@@ -57,7 +77,7 @@ const TeamSection = () => {
                     </MemberDescription>
                 </MemberWrapper>
                 <MemberWrapper>
-                    <Avatar image="ikura_3"/>
+                    <Avatar ikiruAvatar={aaron} image="ikura_3"/>
                     <MemberDescription>
                         <h2>
                             ABaron
@@ -68,7 +88,7 @@ const TeamSection = () => {
                     </MemberDescription>
                 </MemberWrapper>
                 <MemberWrapper>
-                    <Avatar image="ikura_2"/>
+                    <Avatar ikiruAvatar={steve} image="ikura_2"/>
                     <MemberDescription>
                         <h2>
                             Steve

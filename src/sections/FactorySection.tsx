@@ -1,63 +1,33 @@
 import {Wrapper, Content} from '../components/layout/common';
 import {useEffect, useState} from 'react';
 import styled from 'styled-components';
-import { Gender, Rarity} from '../constants';
-import { ITrait, ITraitType, traitsJSON } from '../constants';
+import { Gender, Rarity, IkiruAvatar, TraitType, Trait, ITrait, ITraitType, traitsJSON } from '../constants';
 import {random } from 'lodash';
 import Display from '../components/factory/Display';
 import TraitTypesSection from '../components/factory/TraitTypesSection';
 import TraitSelection from '../components/factory/TraitSelection';
 import { calculateNewIndex } from '../helpers';
 import {motion, AnimateSharedLayout} from 'framer-motion';
-
-
-class Trait implements ITrait{
-    name: string
-    probability: number
-    rarity_threshold: Rarity
-    gender: Gender
-    path: string
-
-    constructor({name, probability, rarity_threshold, gender, path} : ITrait) {
-        this.name = name;
-        this.probability = probability;
-        this.rarity_threshold = rarity_threshold;
-        this.gender = gender;
-        this.path = path;
-    }
-}
-
-class IkiruAvatar {
-    traits: Trait[]
-    gender: Gender
-
-    constructor(traits = [], gender : Gender) {
-        this.traits = traits;
-        this.gender = gender;
-    }
-
-    addTrait = (trait: Trait) => {
-        this.traits.push(trait);
-    }
-
-    assignRarityScore = () => {
-        //
-    }
-}
+import { useLocation } from 'react-router';
 
 interface FactorySectionProps {
-    avatar? : IkiruAvatar
+    ikiruAvatar : IkiruAvatar | undefined | null
 }
 
-const FactorySection = ({avatar} : FactorySectionProps) => {    
-   
-    //TODO - If avatar exists then merge into state...
-
+const FactorySection = () => {    
+    //If avatar exists then merge into state...
+    const location = useLocation();
+    const { ikiruAvatar } : any = Object(location.state);
+    let ikiruAvatarDeserialized;
+    if (ikiruAvatar) {
+        ikiruAvatarDeserialized = JSON.parse(ikiruAvatar)
+    }
+    
     // Keep track of gender state
-    const [gender, setGender] = useState<Gender>(Gender.Male);
+    const [gender, setGender] = useState<Gender>(ikiruAvatarDeserialized ? ikiruAvatarDeserialized.gender : Gender.Male);
     //Create array tracking the correct trait at traitType[index] 
     const initializedLayers = new Array(9).fill(null); 
-    const [imageLayers, setImageLayers] = useState<(ITrait | null)[]>([...initializedLayers]);
+    const [imageLayers, setImageLayers] = useState<(ITrait | null)[]>(ikiruAvatarDeserialized ? ikiruAvatarDeserialized.traits : [...initializedLayers]);
     const [activeTraitType, setActiveTraitType] = useState<number>(0);
     const [activeTrait, setActiveTrait] = useState<number>(0); 
 
@@ -149,7 +119,7 @@ const FactorySection = ({avatar} : FactorySectionProps) => {
         setImageLayers([...initializedLayers]);
     }
 
-    const traitsJSONGenderFiltered = traitsJSON[activeTraitType].traits.filter(trait => trait.gender === gender || trait.gender === Gender.Unisex)
+    const traitsJSONGenderFiltered : Trait[] = traitsJSON[activeTraitType].traitsFilteredByGender(gender);
 
     return (
         <Wrapper>

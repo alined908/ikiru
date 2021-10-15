@@ -29,6 +29,7 @@ import RoadMapSection from "./sections/RoadmapSection"
 import { BrowserRouter as Router,Switch,Route,Link, useLocation} from "react-router-dom";
 import { Sakura } from './sections/FAQSection';
 import SocialMediaComponent from "./components/social/SocialMedia";
+import { Gender, IkiruAvatar } from "./constants";
 
 const network = process.env.REACT_APP_SOLANA_NETWORK as WalletAdapterNetwork;
 const treasury = new anchor.web3.PublicKey(process.env.REACT_APP_TREASURY_ADDRESS!);
@@ -249,7 +250,7 @@ const Header = () => {
         <Navigation>
           <NavigationTabs>
             <NavigationTab>
-              <NavLink to="/random">Create</NavLink>
+              <NavLink to="/create">Create</NavLink>
             </NavigationTab>
             <NavigationTab>
               <NavLink to="/mint">Mint</NavLink>
@@ -267,6 +268,15 @@ const Header = () => {
       </InnerHeader>
     </WrappedHeader>
   )
+}
+
+const deserialize = (serialized: string) => {
+  console.log(serialized);
+  let serializedObject = JSON.parse(serialized);
+  let tempIkiru = new IkiruAvatar([], Gender.Male)
+  Object.assign(tempIkiru, serializedObject);
+  console.log(tempIkiru);
+  return tempIkiru;
 }
 
 const App = () => {
@@ -301,9 +311,9 @@ const App = () => {
               <Route path="/display">
                 <NFTDisplaySection/>
               </Route>
-              <Route path="/random">
-                <FactorySection/>
-              </Route>  
+              <Route path="/create">
+                <FactorySection />
+              </Route>
               <Route path="/">
                 <Main>
                   <Landing>
