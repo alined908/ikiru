@@ -100,7 +100,7 @@ export class KizunaAvatar {
     }
 }
 
-export const rarityColor = {
+export const rarityColor : any = {
     [Rarity.Common]: 'rgb(128,70,27)',
     [Rarity.Uncommon]: 'rgb(0,128,0)',
     [Rarity.Rare]: 'rgb(0,0,205)',

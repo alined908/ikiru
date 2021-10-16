@@ -240,7 +240,7 @@ const Header = () => {
 
   return (
     <WrappedHeader id="header" isHome={location.pathname === '/'}>
-      <InnerHeader>
+      <InnerHeader isHome={location.pathname === '/'}>
         <Navigation>
           <NavigationTabs>
             <NavigationTab>

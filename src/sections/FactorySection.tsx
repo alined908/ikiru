@@ -78,6 +78,7 @@ const FactorySection = () => {
         let randomizedLayers : (ITrait | null)[] = [];
         let activeTraitIndex = 0;
 
+
         for(let i = 0; i < traitsJSON.length; i++) {
             let traitType: ITraitType = traitsJSON[i];
             let possibleCandidates : (ITrait | null)[] = [...traitType.traits].filter(trait => trait.gender === gender || trait.gender === Gender.Unisex);
@@ -88,9 +89,8 @@ const FactorySection = () => {
             let chosen = possibleCandidates[randomIndex] as (null | ITrait);
             randomizedLayers.push(chosen)
         }
-
+        
         setImageLayers([...randomizedLayers]);
-        console.log("Active trait set here: " + activeTraitIndex)
         setActiveTrait(activeTraitIndex);
     }
 

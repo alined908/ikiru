@@ -1,5 +1,7 @@
 import styled from 'styled-components';
 import { ITrait, ITraitType, traitsJSON } from '../../constants';
+import {calculateIndividualScore} from '../../helpers';
+import {NumberAnimated} from '../../components/layout/common';
 
 interface TraitTypesSectionProps {
     imageLayers: (ITrait | null)[] 
@@ -28,6 +30,7 @@ const TraitTypesSection = ({imageLayers, activeTraitType, clickTraitType} : Trai
                         </TraitTypeTitle>
                         <TraitTitle>
                             {imageLayers[index] === null ? "Select" : imageLayers[index]?.name}
+                            {/* <NumberAnimated newTarget={calculateIndividualScore(imageLayers[index])}/> */}
                         </TraitTitle>
                     </div>
                     

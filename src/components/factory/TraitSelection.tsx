@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Gender, ITrait, ITraitType, traitsJSON } from '../../constants';
+import { Gender, ITrait, ITraitType, traitsJSON, Rarity, rarityColor } from '../../constants';
 import Carousel from 'react-spring-3d-carousel';
 import Trait from '../../components/factory/Trait';
 import { RainbowButton } from '../../sections/MintSection';
@@ -15,9 +15,48 @@ interface TraitSelectionProps {
     generateRandomTrait: () => void
 }
 
+const RarityLegendWrapper = styled.div`
+    display: flex;
+    justify-content: space-between;
+    padding: .25rem 0;
+`
+
+const RarityTitle = styled.div`
+    color: var(--light-text);
+    font-weight: 600;
+    margin-bottom: .25rem;
+`
+
+const RarityType = styled.div`
+    
+    padding: .25rem .5rem;
+`
+
+const RarityColor = styled.div<{color: string}>`
+    width: 100%;
+    height: 20px;
+    background: ${props => props.color}
+`
+
+const RarityLegend = () => {
+    return (    
+        <RarityLegendWrapper>
+            {Object.keys(Rarity).filter(key => isNaN(Number(key)) === false).map((rarity) => 
+                <RarityType>
+                    <RarityTitle>
+                        {Rarity[parseInt(rarity)]}
+                    </RarityTitle>
+                    <RarityColor color={rarityColor[parseInt(rarity)]}/>
+                </RarityType>
+            )}
+        </RarityLegendWrapper>
+    )
+}
+
 const TraitSelection = ({gender, activeTraitType, activeTrait, imageLayers, clickTrait, onArrowClick, generateRandomTrait} : TraitSelectionProps) => {
     return (
         <TraitScroller>
+            {/* <RarityLegend/> */}
             <Carousel 
                 slides={
                     traitsJSON[activeTraitType].traits
@@ -62,9 +101,8 @@ export default TraitSelection;
 const TraitScroller = styled.div`
     display: flex;
     flex-direction: column;
-    margin: 0 3rem;
+    margin: 0 6rem;
     width: 800px;
-    padding: 2.5rem;
 `
 
 const ScrollerActions = styled.div`

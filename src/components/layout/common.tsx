@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { metaplexAttribute } from '../../sections/NFTDisplay';
 import VanillaTilt from 'vanilla-tilt';
 import { Link } from 'react-router-dom';
+import { useSpring, config, animated } from 'react-spring';
 
 const MintButton = styled.button`
 `
@@ -115,6 +116,22 @@ export const tiltOptions = {
     glare: true,
     "max-glare": .4
 };
+
+export const NumberAnimated = ({newTarget} : any) => {
+
+    const { number } = useSpring({
+      reset: true,
+    //   reverse: false,
+      from: { number: 0 },
+      to: { number: newTarget},
+      number: 1,
+      delay: 200,
+      config: config.molasses,
+    //   onRest: () => set(!flip),
+    })
+  
+    return <animated.div>{number.to(n => n.toFixed(2))}</animated.div>
+}
 
 interface AvatarWrapperProps {
     width: number
