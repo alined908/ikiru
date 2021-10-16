@@ -1,14 +1,11 @@
-import {useState} from 'react';
-import {Wrapper, Header, Content} from '../components/layout/common';
+import {Wrapper, Header, Content, InnerWrapper} from '../components/layout/common';
 import styled from 'styled-components';
-import { Sakura, chooseRandomSakura } from './FAQSection';
-import { useSpring, a } from '@react-spring/web';
 
 const WrappedRoadmap = styled.div`
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    margin: 4rem 0;
     width: 100%;
 `
 
@@ -26,19 +23,11 @@ const Number = styled.div`
 `
 
 const Goal = styled.div`
-    font-size: 2rem;
+    font-size: 1.6rem;
     font-weight: 600;
     margin-bottom: 1rem;
 `
 
-const FlipBox = styled.div`
-    display: flex;
-    align-items: center;
-    width: 200px;
-    height: 200px;
-    justify-content: center;
-    margin: 0 4rem;
-`
 
 const TargetGoal = styled.div`
     display: flex;
@@ -47,64 +36,66 @@ const TargetGoal = styled.div`
     flex-direction: column;
 `
 
+const Description = styled.div`
+    font-size: 1.1rem;
+    color: var(--light-text);
+`
+
 interface Goal {
     number: number,
     goal: string,
     description: string
 }
 
-interface TargetProps {
-    number: number,
-    goal: string,
-    description: string,
-    numSakura: number
-}
-
 const goals : Goal[] = [
-    {number: 0, goal: "DAO", description: 'The beginning of the IkiruDAO. Percentage of initial sales and royalties will be directed to enhancing the Solana ecosystem.'},
-    {number: 50, goal: "Short", description: 'Producing a nice sketch'},
-    {number: 100, goal: "Manga", description: 'Producing a full blown manga'}
+    {
+        number: 0, 
+        goal: "KizunaDAO", 
+        description: `<div>The beginning of the KizunaDAO. </div>
+
+        &nbsp;
+        <div>- Percentage of initial sales and royalties will be directed to enhancing the Solana ecosystem. </div>
+        <div>-  Active governance of funds will take place with NFT Holders able to have input on how best to direct the funds. </div>
+        <div>- A multisig wallet with signers from trusted members of the community and DAO will be set up. </div>
+        &nbsp;
+        <div>We have ideas on both fronts, but we also want the community to join us in dictating how to best direct the funds!</div>`
+    },{
+        number: 100, 
+        goal: "Merchandise", 
+        description: `Stuff you'd want to wear. NFTs with kizuna will have special perks.`
+    },
+    {
+        number: 100, 
+        goal: "Manga", 
+        description: `<div>Join us as we develop our world and our story. There's a good chance your characters might appear.</div>
+        `
+    },
+    {
+        number: 50, 
+        goal: "Metaverse", 
+        description: `<div>Expanding ways to represent your onchain kizuna.</div>`
+    },
+    
 ]
-
-const Target = ({number, goal, description, numSakura} : TargetProps) => {
-    const [flipped, set] = useState(false);
-
-    const { transform, opacity } = useSpring({
-        opacity: flipped ? 1 : 0,
-        transform: `perspective(600px) rotateX(${flipped ? 180 : 0}deg)`,
-        config: { mass: 5, tension: 500, friction: 80 },
-    })
-
-    return (
-        <FlipBox onClick={() => set(state => !state)}>
-            <a.div className="flipper" style={{ opacity: 1, transform }}>
-                <WrappedTarget>
-                    {[...Array(numSakura)].map(() => <Sakura src={`./sakura/red_sakura.png`}/> )}
-                </WrappedTarget>
-            </a.div>
-            <a.div className="flipper" style={{opacity, transform,rotateX: '180deg',}}>
-                <WrappedTarget>
-                    <TargetGoal>
-                        <Goal>{goal}</Goal>
-                        {description}
-                    </TargetGoal>
-                </WrappedTarget>
-            </a.div>
-        </FlipBox>
-    )
-}
 
 const RoadMapSection = () => {
     return (
         <Wrapper>
-            <Header text="Roadmap"/>
-            <Content>
-                <WrappedRoadmap>
-                    {[0, 1, 2].map((num) => 
-                        <Target {...goals[num]} numSakura={num + 1}/>)
-                    }
-                </WrappedRoadmap>
-            </Content>
+            <InnerWrapper>
+                <Header text="Roadmap"/>
+                <Content>
+                    <WrappedRoadmap>
+                        {[0, 1, 2, 3].map((num) => 
+                            <WrappedTarget>
+                                <TargetGoal>
+                                    <Goal>{goals[num].goal}</Goal>
+                                    <Description dangerouslySetInnerHTML={{__html: goals[num].description}}></Description>
+                                </TargetGoal>
+                            </WrappedTarget>
+                        )}
+                    </WrappedRoadmap>
+                </Content>
+            </InnerWrapper>
         </Wrapper>
     )
 }

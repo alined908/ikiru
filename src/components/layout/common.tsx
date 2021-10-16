@@ -1,9 +1,12 @@
 import _ from 'lodash';
 import {useEffect, useRef, useState, MutableRefObject} from 'react';
 import styled from 'styled-components';
-import { chooseRandomSakura, Sakura } from '../../sections/FAQSection';
+import { metaplexAttribute } from '../../sections/NFTDisplay';
 import VanillaTilt from 'vanilla-tilt';
 import { Link } from 'react-router-dom';
+
+const MintButton = styled.button`
+`
 
 export const Main = styled.div`
   display: flex;
@@ -14,14 +17,14 @@ export const Main = styled.div`
 export const Body = styled.div`
   display: flex;
   flex-direction: column;
-  background: rgb(243,245,240);
+  background: white;
   color: black;
+
 `
 
 export const Content = styled.div`
     display: flex;
     flex-direction: column;
-    align-items: center;
     width: 100%;
     margin: 3rem 0;
 `
@@ -42,21 +45,18 @@ export const Header = ({text} : HeaderProps) => {
 
 const WrappedHeader = styled.div`
     display: flex;
-    justify-content: center;
     align-items: center;
     width: 100%;
 `
 
-const HeaderText = styled.h1`
+const HeaderText = styled.mark`
     display: inline;
     margin-bottom: 2rem;
-    padding: 0 2rem;
-    font-size: 2.7rem;
+    margin: 0;
+    font-size: 2.5rem;
+    font-weight: 600;
     text-align: center;
-`
-
-export const baseContainer = `
-    border-radius: .25rem;
+    padding: .7rem 1rem;
 `
 
 export const Wrapper = styled.section`
@@ -64,17 +64,32 @@ export const Wrapper = styled.section`
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: var(--light-bg);
-    ${baseContainer}
+    border-bottom: 3px solid black;
+    background: transparent;
     flex: 1;
+    
+`
+
+export const InnerWrapper = styled.div`
+    display: flex;
+    flex-direction: column;
+    margin: 3rem auto 0 auto;
+    align-items: center;
+    justify-content: center;
+    width: var(--body-width);
+    position: relative;
+    left: 7.5%;
 `
 
 export const InnerBody = styled.div`
     display: flex;
     flex-direction: column;
-    width: var(--body-width);
+    width: 100%;
     margin: 0 auto;
-    margin-bottom: 3rem;
+
+    section:last-of-type {
+        border-bottom: 0;
+    }
 `
 
 export const TiltWrapper = styled.div`
@@ -111,6 +126,7 @@ export const AvatarWrapper = styled.div<AvatarWrapperProps>`
     box-shadow: var(--shadow-l);
     width: ${props => props.width}px;
     height: ${props => props.height}px;
+    border-radius: .25rem;
 `
 
 export const AvatarImage = styled.img`
@@ -118,40 +134,89 @@ export const AvatarImage = styled.img`
     height: 100%;
 `
 
-export const Avatar = ({image, width, height, ikiruAvatar} : any) => {
+export const Avatar = ({image, width, height, kizunaAvatar} : any) => {
 
     return (
-        <Link to={{pathname: '/create', state: {ikiruAvatar: JSON.stringify(ikiruAvatar)}}}>
+        <Link to={{pathname: '/create', state: {kizunaAvatar: JSON.stringify(kizunaAvatar)}}}>
             <Tilt options={tiltOptions}>
                 <AvatarWrapper width={width} height={height}>
-                    <AvatarImage src={`./avatars/${image}.png`}/>
+                    <AvatarImage src={image}/>
                 </AvatarWrapper>
             </Tilt>
         </Link>
     )
 }
 
-  // Hook
-  // T - could be any type of HTML element like: HTMLDivElement, HTMLParagraphElement and etc.
-  // hook returns tuple(array) with type [any, boolean]
-  export function useHover<T>(): [MutableRefObject<T>, boolean] {
+export const DisplayAvatarWrapper = styled.div<AvatarWrapperProps>`
+    display: flex;
+    width: ${props => props.width}px;
+    height: ${props => props.height}px;
+    border-radius: .25rem;
+    max-width: 500px;
+`
+
+export const DisplayAvatarTraits = styled.div`
+    display: flex;
+    flex-wrap: wrap;
+    background-color: white;
+    max-width: 400px;
+    font-size: .8rem;
+`
+
+export const DisplayAvatarTrait = styled.div`
+    display: flex;
+    padding: .5rem;
+`
+
+export const DisplayAvatar = ({image, width, height, kizunaAvatar} : any) => {
+
+    // const triggerConnectionChange = () => {
+    //     client = Client
+    // }   
+
+    return (
+        // <Link to={{pathname: '/create', state: {kizunaAvatar: JSON.stringify(kizunaAvatar)}}}>
+            // <Tilt options={tiltOptions}>
+            <div>
+                <DisplayAvatarWrapper width={width} height={height}>
+                    <AvatarImage src={image}/>
+                </DisplayAvatarWrapper>
+                <DisplayAvatarTraits>
+                    {kizunaAvatar.arweaveData.attributes.map((attr : metaplexAttribute) => 
+                        <DisplayAvatarTrait>
+                            {attr.trait_type} - {attr.value}
+                        </DisplayAvatarTrait>
+                    )}
+                </DisplayAvatarTraits>
+                {/* <MintButton onClick={triggerConnectionChange}>Hello</MintButton> */}
+            </div>
+            // </Tilt>
+        // </Link>
+    )
+}
+
+
+// Hook
+// T - could be any type of HTML element like: HTMLDivElement, HTMLParagraphElement and etc.
+// hook returns tuple(array) with type [any, boolean]
+export function useHover<T>(): [MutableRefObject<T>, boolean] {
     const [value, setValue] = useState<boolean>(false); 
     const ref: any = useRef<T | null>(null);
     const handleMouseOver = (): void => setValue(true);
     const handleMouseOut = (): void => setValue(false);
     useEffect(
-      () => {
+        () => {
         const node: any = ref.current;
         if (node) {
-          node.addEventListener("mouseover", handleMouseOver);
-          node.addEventListener("mouseout", handleMouseOut);
-          return () => {
+            node.addEventListener("mouseover", handleMouseOver);
+            node.addEventListener("mouseout", handleMouseOut);
+            return () => {
             node.removeEventListener("mouseover", handleMouseOver);
             node.removeEventListener("mouseout", handleMouseOut);
-          };
+            };
         }
-      },
-      [ref.current] // Recall only if ref changes
+        },
+        [ref.current] // Recall only if ref changes
     );
     return [ref, value];
-  }
+}

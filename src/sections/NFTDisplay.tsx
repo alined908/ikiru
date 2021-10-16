@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import {Wrapper, Header} from '../components/layout/common';
+import {Wrapper, Header, DisplayAvatar} from '../components/layout/common';
 import * as anchor from "@project-serum/anchor";
 import * as web3 from '@solana/web3.js';
 import {deserializeUnchecked} from "borsh";
@@ -9,8 +9,7 @@ import { BinaryReader, BinaryWriter } from 'borsh';
 import axios from 'axios';
 import base58 from 'bs58';
 import { AnchorWallet, useAnchorWallet } from "@solana/wallet-adapter-react";
-import { Wallet } from '@solana/wallet-adapter-wallets';
-import { Avatar } from '../components/layout/common';
+import { Gender, KizunaAvatar, Trait, traitsJSON, genderMapping } from '../constants';
 
 export const extendBorsh = () => {
     (BinaryReader.prototype as any).readPubkey = function () {
@@ -107,11 +106,27 @@ export class Metadata {
   }
 }
 
+export interface metaplexAttribute {
+  trait_type: string
+  value: any
+}
+
 export interface arweaveData {
+  
+  name: string
+  symbol: string
+  description: string
+  seller_fee_basis_points: number
+  image: string
+  external_url: string
+  attributes: metaplexAttribute[]
   collection: {
     name: string
+    family: string
   },
-  image: string
+  properties: {
+
+  }
 }
 
 export const METADATA_SCHEMA = new Map<any, any>([
@@ -158,7 +173,7 @@ export const METADATA_SCHEMA = new Map<any, any>([
 const SOLANA_TOKEN_ID = new web3.PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA");
 const SEED = "metadata"
 const METADATA_PROGRAM_ID = "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s";
-const updateAuthority = "85boTEyWAik2jqwdqjQZ4e7RUXUCg2SgQFALhKY8Cjak";
+const updateAuthority = "BDmXj3pCxEqcHpUh6RAtwzJGGsF6YemkpxQoLcNNJTpD";
 const QUICKNODE_URL = "https://api.devnet.solana.com"
 
 export const findProgramAddress = async (seeds : any, programId : any) => {
@@ -168,17 +183,15 @@ export const findProgramAddress = async (seeds : any, programId : any) => {
 };
 
 const Display = styled.div`
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-column-gap: 2rem;
-  grid-row-gap: 2rem;
+  display: flex;
+  flex-wrap: wrap;
   width: 70%;
   margin: 0 auto;
 `
 
 const NFTDisplaySection = () => {
 
-    const [Nfts, setNfts] = useState<Metadata[]>([]);
+    const [avatars, setAvatars] = useState<KizunaAvatar[]>([]);
     const wallet = useAnchorWallet();
 
     useEffect(() => {
@@ -215,7 +228,9 @@ const NFTDisplaySection = () => {
       }
 
       //filter by update authority or by collection name
+      console.log(nftMetadata);
       const filteredNFTs = nftMetadata.filter((metadata : Metadata) => metadata.updateAuthority === updateAuthority);
+      console.log(filteredNFTs);
 
       for (let i = 0; i < filteredNFTs.length; i++) {
         let metadata = filteredNFTs[i];
@@ -226,15 +241,52 @@ const NFTDisplaySection = () => {
           console.log('error');
         }
       }
+      convertToAvatars(filteredNFTs)
+      
+    }
 
-      setNfts(filteredNFTs);
+    let traitMapping = {
+      'Night Sky': traitsJSON[0].traits[0],
+      'Green Sakura': traitsJSON[0].traits[1],
+      'Solana Seigaha': traitsJSON[0].traits[2],
+      'Red Square': traitsJSON[0].traits[3],
+      'None': traitsJSON[0] 
+    }
+
+    const convertToAvatars = (filteredMetadatas: Metadata[]) => {
+      console.log(filteredMetadatas);
+      let kizunaAvatars : KizunaAvatar[] = [];
+      for (let i = 0 ; i < filteredMetadatas.length; i ++) {
+        let arweaveDataObject : arweaveData = filteredMetadatas[i].arweaveData!;
+        let arweaveTraits : metaplexAttribute[] = arweaveDataObject.attributes;
+        let traits : Trait[] = [];
+
+        for (let j = 0; j < arweaveTraits.length; j++ ) {
+          let trait : metaplexAttribute = arweaveTraits[j];
+          console.log(trait)
+        }
+
+        let gender = arweaveTraits[3].value;
+        let kizunaAvatar = new KizunaAvatar( traits , Gender.Male)
+        kizunaAvatar.image = arweaveDataObject.image;
+        kizunaAvatar.arweaveData = arweaveDataObject;
+        kizunaAvatars.push(kizunaAvatar);
+      }
+      setAvatars(kizunaAvatars);
     }
 
     return (
       <Wrapper>
         <Display>
-          {Nfts.filter((nft) => (nft.arweaveData as arweaveData).collection && (nft.arweaveData as arweaveData).collection.name === "Pigs on Solana Season #1").map((metadata : Metadata) => 
-            <Avatar width={380} height={380} image={metadata!.arweaveData!.image}/>
+          {avatars.map((avatar: KizunaAvatar) => 
+            
+            <DisplayAvatar 
+              width={380} 
+              height={380} 
+              image={avatar.image} 
+              kizunaAvatar={avatar}
+            />
+       
           )}
         </Display>
       </Wrapper>

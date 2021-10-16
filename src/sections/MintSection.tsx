@@ -68,6 +68,7 @@ export const MintButton = styled.button<ButtonProps>`
       return '60px'
     }
   }};
+  max-height: 60px;
   border: none;
   background: ${props => props.background};
   transition: all .33s ease;
@@ -206,7 +207,7 @@ interface ProgressBarProps {
 
 const ProgressBar = ({progress, end}: ProgressBarProps) => {
   const [ref, {width}] = useMeasure();
-  const props = useSpring({ from: { width: 0}, to:{ width: 2/end * width } })
+  const props = useSpring({ from: { width: 0}, to:{ width: progress/end * width } })
 
   return (
     <WrappedProgressBar ref={ref}>
@@ -382,7 +383,7 @@ const MintSection = (props: HomeProps) => {
 
           <MintButtonContainer>
             <MintButton
-              background="#BB377D" 
+              background="black" 
               disabled={!wallet || isSoldOut || isMinting || !isActive}
               onClick={onMint}
             > 

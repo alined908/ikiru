@@ -9,6 +9,7 @@ body {
   color: black;
   background: var(--light-bg);
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
 code {
@@ -25,6 +26,7 @@ code {
   --border: 1px solid #d3d3d3;
   --light-bg: rgb(243,245,240);
   --black-hover: rgba(30, 30, 30, .9);
+  --light-text: #6b6f76;
 }
 
 #root {
@@ -101,3 +103,17 @@ h2 {
   border-radius: 5px;
 }
 
+mark {
+  margin: 0 -0.4em;
+  padding: 0.1em 0.4em;
+  border-radius: 0.8em 0.3em;
+  background: transparent;
+  background-image: linear-gradient(
+    to right,
+    rgba(255, 225, 0, 0.1),
+    rgba(255, 225, 0, 0.7) 4%,
+    rgba(255, 225, 0, 0.3)
+  );
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}

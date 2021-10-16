@@ -1,5 +1,5 @@
 import "./App.css";
-import { useMemo, useEffect } from "react";
+import { useMemo, useEffect, useState, useRef } from "react";
 import * as anchor from "@project-serum/anchor";
 import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
 import {
@@ -24,12 +24,15 @@ import MintSection from "./sections/MintSection";
 import AboutUsSection from "./sections/AboutUsSection";
 import FactorySection from "./sections/FactorySection";
 import {Main, Body, InnerBody} from './components/layout/common';
-import FAQSection from "./sections/FAQSection";
+import FAQSection, { chooseRandomSakura } from "./sections/FAQSection";
 import RoadMapSection from "./sections/RoadmapSection"
 import { BrowserRouter as Router,Switch,Route,Link, useLocation} from "react-router-dom";
 import { Sakura } from './sections/FAQSection';
 import SocialMediaComponent from "./components/social/SocialMedia";
-import { Gender, IkiruAvatar } from "./constants";
+import { AnimateSharedLayout, motion } from "framer-motion";
+import { Gender, KizunaAvatar } from "./constants";
+import { MintButton as Button } from "./sections/MintSection";
+import { random } from "lodash";
 
 const network = process.env.REACT_APP_SOLANA_NETWORK as WalletAdapterNetwork;
 const treasury = new anchor.web3.PublicKey(process.env.REACT_APP_TREASURY_ADDRESS!);
@@ -64,9 +67,10 @@ const NavigationTabs = styled.div`
 
 const NavigationTab = styled.div`
   display: flex;
-  padding: 2rem;
+  padding: 1.5rem;
   font-weight: 800;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
+  align-items: center;
 `
 
 const LandingWrapper = styled.div`
@@ -79,13 +83,16 @@ const LandingWrapper = styled.div`
 const CommunityBannerWrapper = styled.div`
   display: flex;
   position: relative;
-  background-color: white;
-  background-image: url('/traits/unisex/backgrounds/sakura_green.png');
+  background-image: linear-gradient(rgba(142, 158, 171, 0.2), rgba(66, 134, 244, 0.1)), url('/traits/unisex/backgrounds/sakura_green.png');
   height: 400px;
   justify-content: center;
   flex-direction: column;
   background-position: top;
+  z-index: 10;
   background-size: cover;
+  border-top: 3px solid black;
+  box-shadow: var(--shadow-l);
+  border-bottom: 3px solid black
 `
 
 const CommunityCall = styled.h1`
@@ -95,8 +102,7 @@ const CommunityCall = styled.h1`
 `
 
 const CommunityBannerInner = styled.div`
-  position: absolute;
-  left: 30%;
+
   max-width: 1000px;
   margin: auto;
 
@@ -116,21 +122,19 @@ const WrappedHeader = styled.div<WrappedHeaderProps>`
   top:0;
   width: 100%;
   margin: 0 auto;
-  padding: 1rem 0;
+  padding: 1.5rem 0;
   justify-content: space-between;
   z-index: 10;
   
-
   a {
-    
-    color: black;
+    color: ${props => props.isHome ? 'white' : 'black'};
     &:hover {
       transition: all .33s ease;
       color: pink;
     }
 
     div {
-      fill: "black";
+      fill:  ${props => props.isHome ? 'white' : 'black'};
 
       &:hover {
         transition: all .33s ease;
@@ -140,13 +144,14 @@ const WrappedHeader = styled.div<WrappedHeaderProps>`
   }
 `
 
-const InnerHeader = styled.div`
+const InnerHeader = styled.div<WrappedHeaderProps>`
   display: flex;
-  justify-content: space-between;
-  width: 70%;
   margin: 0 auto;
   padding: 0 1.5rem;
   align-items: center;
+  background: ${props => props.isHome ? 'rgba(30, 30, 30, .7)' : 'transparent'};
+  border-radius: .7rem;
+  box-shadow: ${props => props.isHome ? 'var(--shadow-s)' : ''} ;
 `
 
 const NavActionBar = styled.div`
@@ -155,7 +160,7 @@ const NavActionBar = styled.div`
 `
 
 const LandingSplash = styled.div`
-  display: block;
+  display: flex;
   width: auto;
   height: auto;
   background: wheat;
@@ -191,15 +196,10 @@ const CommunityBanner = () => {
     <CommunityBannerWrapper id="banner">
       <CommunityBannerInner>
         <CommunityCall>
-          Join The Commmunity
+          Kizuna
         </CommunityCall>
-        <p>
-            Head over to our discord to join our awesome community. 
-            Keep up to date with our announcements and stay in touch with your fellow.
-        </p>
-        
+        <Button background="black">Join Discord</Button>
       </CommunityBannerInner>
-      
     </CommunityBannerWrapper>
   )
 }
@@ -241,12 +241,6 @@ const Header = () => {
   return (
     <WrappedHeader id="header" isHome={location.pathname === '/'}>
       <InnerHeader>
-        <Link to="/">
-          <Logo>
-            <Sakura src={`./sakura/red_sakura.png`}/>
-            Ikiru
-          </Logo>
-        </Link>
         <Navigation>
           <NavigationTabs>
             <NavigationTab>
@@ -256,7 +250,18 @@ const Header = () => {
               <NavLink to="/mint">Mint</NavLink>
             </NavigationTab>
             <NavigationTab>
+              <Link to="/">
+                <Logo>
+                  <Sakura src={`./sakura/red_sakura.png`}/>
+                  Kizuna
+                </Logo>
+              </Link>
+            </NavigationTab>
+            <NavigationTab>
               <NavLink to="/display">Display</NavLink>
+            </NavigationTab>
+            <NavigationTab>
+              <NavLink to="/connect">Connect</NavLink>
             </NavigationTab>
           </NavigationTabs>
         </Navigation>
@@ -270,13 +275,59 @@ const Header = () => {
   )
 }
 
-const deserialize = (serialized: string) => {
-  console.log(serialized);
-  let serializedObject = JSON.parse(serialized);
-  let tempIkiru = new IkiruAvatar([], Gender.Male)
-  Object.assign(tempIkiru, serializedObject);
-  console.log(tempIkiru);
-  return tempIkiru;
+const WrappedSakura = styled(Sakura)`
+
+`
+
+const Flowers = styled.div`
+  display: flex;
+  margin-top: -5rem;
+  opacity: .7;
+`
+ 
+const BodyComponent = () => {
+  const [isLoaded, setisLoaded] = useState(false);
+  const numFlowers = 50;
+  const bodyRef = useRef(null);
+  
+
+  useEffect(() => {
+    setisLoaded(true);
+  })
+
+  const renderFlowers = () => {
+    let flowersInMotion = [];
+    let bodyStart = window.innerHeight;
+    let bodyWidth = (bodyRef.current! as HTMLElement).clientWidth;
+    console.log(bodyStart)
+
+    for (let i = 0; i < numFlowers; i++) {
+      let slowFlower = (
+        <motion.div animate={{y: bodyStart + 100, rotate: [0, 360]}} transition={{type: 'tween', duration: 20, ease: "easeInOut", repeat: Infinity, delay: random(0, 20) }}>
+          <WrappedSakura src={`./sakura/${chooseRandomSakura()}_sakura.png`}/>
+        </motion.div>
+      )
+      flowersInMotion.push(slowFlower)
+    }
+    return flowersInMotion;
+  }
+
+  return (
+    <Body ref={bodyRef}>
+      <Flowers>
+        <AnimateSharedLayout>
+        {isLoaded && renderFlowers().map((flower) => flower)}
+        </AnimateSharedLayout>
+        
+      </Flowers>
+      <InnerBody>
+        <AboutUsSection/>
+        <FAQSection/>
+        <RoadMapSection/>
+        <TeamSection/>
+      </InnerBody>
+    </Body>
+  )
 }
 
 const App = () => {
@@ -293,8 +344,8 @@ const App = () => {
 
   return (
     <ConnectionProvider endpoint={endpoint}>
-      <WalletProvider wallets={wallets}>
-        <WalletModalProvider logo="./pink_sakura.png">
+      <WalletProvider wallets={wallets} autoConnect>
+        <WalletModalProvider logo="./sakura/pink_sakura.png">
           <Router>
             <Header/>
             <Switch>
@@ -316,17 +367,9 @@ const App = () => {
               </Route>
               <Route path="/">
                 <Main>
-                  <Landing>
-                  </Landing>
+                  <Landing/>
                   <CommunityBanner/>
-                  <Body>
-                    <InnerBody>
-                      <AboutUsSection/>
-                      <FAQSection/>
-                      <RoadMapSection/>
-                      <TeamSection/>
-                    </InnerBody>
-                  </Body>
+                  <BodyComponent/>
                 </Main>
               </Route>
             </Switch>

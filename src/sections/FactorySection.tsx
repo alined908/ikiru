@@ -1,7 +1,7 @@
 import {Wrapper, Content} from '../components/layout/common';
 import {useEffect, useState} from 'react';
 import styled from 'styled-components';
-import { Gender, Rarity, IkiruAvatar, TraitType, Trait, ITrait, ITraitType, traitsJSON } from '../constants';
+import { Gender, Rarity, KizunaAvatar, TraitType, Trait, ITrait, ITraitType, traitsJSON } from '../constants';
 import {random } from 'lodash';
 import Display from '../components/factory/Display';
 import TraitTypesSection from '../components/factory/TraitTypesSection';
@@ -11,23 +11,23 @@ import {motion, AnimateSharedLayout} from 'framer-motion';
 import { useLocation } from 'react-router';
 
 interface FactorySectionProps {
-    ikiruAvatar : IkiruAvatar | undefined | null
+    KizunaAvatar : KizunaAvatar | undefined | null
 }
 
 const FactorySection = () => {    
     //If avatar exists then merge into state...
     const location = useLocation();
-    const { ikiruAvatar } : any = Object(location.state);
-    let ikiruAvatarDeserialized;
-    if (ikiruAvatar) {
-        ikiruAvatarDeserialized = JSON.parse(ikiruAvatar)
+    const { kizunaAvatar } : any = Object(location.state);
+    let kizunaAvatarDeserialized;
+    if (kizunaAvatar) {
+        kizunaAvatarDeserialized = JSON.parse(kizunaAvatar)
     }
     
     // Keep track of gender state
-    const [gender, setGender] = useState<Gender>(ikiruAvatarDeserialized ? ikiruAvatarDeserialized.gender : Gender.Male);
+    const [gender, setGender] = useState<Gender>(kizunaAvatarDeserialized ? kizunaAvatarDeserialized.gender : Gender.Male);
     //Create array tracking the correct trait at traitType[index] 
     const initializedLayers = new Array(9).fill(null); 
-    const [imageLayers, setImageLayers] = useState<(ITrait | null)[]>(ikiruAvatarDeserialized ? ikiruAvatarDeserialized.traits : [...initializedLayers]);
+    const [imageLayers, setImageLayers] = useState<(ITrait | null)[]>(kizunaAvatarDeserialized ? kizunaAvatarDeserialized.traits : [...initializedLayers]);
     const [activeTraitType, setActiveTraitType] = useState<number>(0);
     const [activeTrait, setActiveTrait] = useState<number>(0); 
 
@@ -58,6 +58,7 @@ const FactorySection = () => {
     },[gender]) 
 
     useEffect(() => {
+        console.log("this is called ")
         let imageLayersCopy = [...imageLayers];
         imageLayersCopy[activeTraitType] = traitsJSONGenderFiltered[activeTrait];
         setImageLayers(imageLayersCopy);
@@ -75,19 +76,22 @@ const FactorySection = () => {
 
     const generateRandomAvatar = () => {
         let randomizedLayers : (ITrait | null)[] = [];
-        let activeTrait = 0;
+        let activeTraitIndex = 0;
 
         for(let i = 0; i < traitsJSON.length; i++) {
             let traitType: ITraitType = traitsJSON[i];
             let possibleCandidates : (ITrait | null)[] = [...traitType.traits].filter(trait => trait.gender === gender || trait.gender === Gender.Unisex);
             let randomIndex = random(0, possibleCandidates.length - 1);
-            activeTrait = randomIndex;
+            if (i === activeTraitType) {
+                activeTraitIndex = randomIndex;
+            }
             let chosen = possibleCandidates[randomIndex] as (null | ITrait);
             randomizedLayers.push(chosen)
         }
 
-        setActiveTrait(activeTrait);
         setImageLayers([...randomizedLayers]);
+        console.log("Active trait set here: " + activeTraitIndex)
+        setActiveTrait(activeTraitIndex);
     }
 
     const generateRandomTrait = () => {
@@ -123,51 +127,49 @@ const FactorySection = () => {
 
     return (
         <Wrapper>
-            <Content>
-                <FactoryWrapper>
-                    <TraitSection>
-                        <div>
-                            <GenderSection>
-                                <AnimateSharedLayout>
-                                    <GenderSelection title={Gender[gender]}>
-                                        <GenderButton 
-                                            isSelected={gender === Gender.Male}
-                                            title={Gender[Gender.Male]}  
-                                            onClick={() => setGender(Gender.Male)}
-                                        />
-                                        <GenderButton 
-                                            isSelected={gender === Gender.Female}
-                                            title={Gender[Gender.Female]} 
-                                            onClick={() => setGender(Gender.Female)}
-                                        />
-                                    </GenderSelection>
-                                </AnimateSharedLayout>
-                            </GenderSection>
-                            <TraitTypesSection 
-                                imageLayers={imageLayers} 
-                                activeTraitType={activeTraitType} 
-                                clickTraitType={clickTraitType}  
-                            />
-                        </div>
-                        <TraitSelection 
-                            {...{
-                                gender,
-                                activeTraitType,
-                                activeTrait, 
-                                generateRandomTrait, 
-                                onArrowClick, 
-                                imageLayers, 
-                                clickTrait
-                            }} 
+            <FactoryWrapper>
+                <TraitSection>
+                    <div>
+                        <GenderSection>
+                            <AnimateSharedLayout>
+                                <GenderSelection title={Gender[gender]}>
+                                    <GenderButton 
+                                        isSelected={gender === Gender.Male}
+                                        title={Gender[Gender.Male]}  
+                                        onClick={() => setGender(Gender.Male)}
+                                    />
+                                    <GenderButton 
+                                        isSelected={gender === Gender.Female}
+                                        title={Gender[Gender.Female]} 
+                                        onClick={() => setGender(Gender.Female)}
+                                    />
+                                </GenderSelection>
+                            </AnimateSharedLayout>
+                        </GenderSection>
+                        <TraitTypesSection 
+                            imageLayers={imageLayers} 
+                            activeTraitType={activeTraitType} 
+                            clickTraitType={clickTraitType}  
                         />
-                    </TraitSection>
-                    <Display 
-                        imageLayers={imageLayers} 
-                        generateRandomAvatar={generateRandomAvatar} 
-                        clearCanvas={clearCanvas}
+                    </div>
+                    <TraitSelection 
+                        {...{
+                            gender,
+                            activeTraitType,
+                            activeTrait, 
+                            generateRandomTrait, 
+                            onArrowClick, 
+                            imageLayers, 
+                            clickTrait
+                        }} 
                     />
-                </FactoryWrapper>
-            </Content>
+                </TraitSection>
+                <Display 
+                    imageLayers={imageLayers} 
+                    generateRandomAvatar={generateRandomAvatar} 
+                    clearCanvas={clearCanvas}
+                />
+            </FactoryWrapper>
         </Wrapper>
     )
 }

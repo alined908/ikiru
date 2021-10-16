@@ -30,7 +30,7 @@ const Rotatooor = () => {
 
     return (
         <WrappedRotator>
-            <Avatar width={465} height={465} image={`/ikura_${shuffled[numRotation]}`}/>
+            <Avatar width={465} height={465} image={`./avatars/ikura_${shuffled[numRotation]}.png`}/>
         </WrappedRotator>
     )
 }

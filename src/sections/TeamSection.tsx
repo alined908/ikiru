@@ -1,8 +1,8 @@
 import styled from 'styled-components';
-import {Header, Wrapper, Content} from '../components/layout/common';
+import {Header, Wrapper, Content, InnerWrapper} from '../components/layout/common';
 import SocialMediaComponent from '../components/social/SocialMedia';
 import { Avatar } from '../components/layout/common';
-import {Gender, Trait, IkiruAvatar, traitsJSON} from '../constants';
+import {Gender, Trait, KizunaAvatar, traitsJSON} from '../constants';
 
 const Description = styled.div`
     display: flex;
@@ -15,7 +15,6 @@ const Team = styled.div`
     width: 90%;
     min-width: 1000px;
     grid-template-columns: 50% 50%;
-    justify-items: center;
     grid-row-gap: 3rem;
 `
 
@@ -33,7 +32,10 @@ const MemberDescription = styled.div`
 const InfoRow = styled.div`
     display: flex;
     align-items: center;
-    justify-content: space-between;
+`
+
+const MemberStory = styled.div`
+    color: var(--light-text);
 `
 
 //Todo - Remap words -> posiiton
@@ -51,57 +53,57 @@ const danielTraits : Trait[] = [
 ] 
 const aaronTraits: Trait[] = []
 const steveTraits: Trait[] = []
-const daniel = new IkiruAvatar(danielTraits, Gender.Male);
-const aaron = new IkiruAvatar(danielTraits, Gender.Male);
-const steve = new IkiruAvatar(danielTraits, Gender.Male);
+const daniel = new KizunaAvatar(danielTraits, Gender.Male);
+const aaron = new KizunaAvatar(danielTraits, Gender.Male);
+const steve = new KizunaAvatar(danielTraits, Gender.Male);
 
 const TeamSection = () => {
     return (
       <Wrapper>
-        <Header text="Team"/>
-        <Content>
-            <Team>
-                <MemberWrapper>
-                    <Avatar ikiruAvatar={daniel} image="ikura_1"/>
-                    <MemberDescription>
-                        <InfoRow>
+        <InnerWrapper>
+            <Header text="Team"/>
+            <Content>
+                <Team>
+                    <MemberWrapper>
+                        <Avatar kizunaAvatar={daniel} image={`./avatars/ikura_1.png`}/>
+                        <MemberDescription>
+                            <InfoRow>
+                                <h2>
+                                    Alined
+                                </h2>
+                                <SocialMediaComponent type="twitter" link="https://twitter.com/alinedxyz"/>
+                            </InfoRow>
+                            
+                            <MemberStory>
+                                Lover of Monkes. Classy Thug Bird. Quit web2 to pursue web3.
+                            </MemberStory>
+                        </MemberDescription>
+                    </MemberWrapper>
+                    <MemberWrapper>
+                        <Avatar kizunaAvatar={aaron} image={`./avatars/ikura_3.png`}/>
+                        <MemberDescription>
                             <h2>
-                                Alined
+                                ABaron
                             </h2>
-                            <SocialMediaComponent type="twitter" link="https://twitter.com/alinedxyz"/>
-                        </InfoRow>
-                        
-                        <div>
-                            Lover of Monkes. Classy Thug Bird. Dreaming of quitting web2 to pursue web3.
-                        </div>
-                    </MemberDescription>
-                </MemberWrapper>
-                <MemberWrapper>
-                    <Avatar ikiruAvatar={aaron} image="ikura_3"/>
-                    <MemberDescription>
-                        <h2>
-                            ABaron
-                        </h2>
-                        <div>
-                            Aspiring artist trying to go full time. 
-                        </div>
-                    </MemberDescription>
-                </MemberWrapper>
-                <MemberWrapper>
-                    <Avatar ikiruAvatar={steve} image="ikura_2"/>
-                    <MemberDescription>
-                        <h2>
-                            Steve
-                        </h2>
-                        <div>
-                            Purveyor of anime.
-                        </div>
-                    </MemberDescription>
-                </MemberWrapper>
-            </Team>
-        </Content>
-        
-        
+                            <MemberStory>
+                                Aspiring artist trying to go full time. 
+                            </MemberStory>
+                        </MemberDescription>
+                    </MemberWrapper>
+                    <MemberWrapper>
+                        <Avatar kizunaAvatar={steve} image={`./avatars/ikura_2.png`}/>
+                        <MemberDescription>
+                            <h2>
+                                Steve
+                            </h2>
+                            <MemberStory>
+                                Purveyor of anime.
+                            </MemberStory>
+                        </MemberDescription>
+                    </MemberWrapper>
+                </Team>
+            </Content>
+        </InnerWrapper>        
       </Wrapper>
     )
   }
