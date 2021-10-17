@@ -23,7 +23,8 @@ import NFTDisplaySection from "./sections/NFTDisplay";
 import MintSection from "./sections/MintSection";
 import AboutUsSection from "./sections/AboutUsSection";
 import FactorySection from "./sections/FactorySection";
-import {Main, Body, InnerBody} from './components/layout/common';
+import ConnectSection from "./sections/ConnectSection";
+import {Main, Body, InnerBody, ExternalButton} from './components/layout/common';
 import FAQSection, { chooseRandomSakura } from "./sections/FAQSection";
 import RoadMapSection from "./sections/RoadmapSection"
 import { BrowserRouter as Router,Switch,Route,Link, useLocation} from "react-router-dom";
@@ -31,7 +32,6 @@ import { Sakura } from './sections/FAQSection';
 import SocialMediaComponent from "./components/social/SocialMedia";
 import { AnimateSharedLayout, motion } from "framer-motion";
 import { Gender, KizunaAvatar } from "./constants";
-import { MintButton as Button } from "./sections/MintSection";
 import { random } from "lodash";
 
 const network = process.env.REACT_APP_SOLANA_NETWORK as WalletAdapterNetwork;
@@ -191,14 +191,23 @@ const Landing = ({children} : any) => {
   )
 }
 
+
+
 const CommunityBanner = () => {
+  const redirectToDiscord = () => {
+    console.log('hello')
+    
+  }
+
   return (
     <CommunityBannerWrapper id="banner">
       <CommunityBannerInner>
         <CommunityCall>
           Kizuna
         </CommunityCall>
-        <Button background="black">Join Discord</Button>
+        <ExternalButton href="https://discord.gg/UeRDFmRU" background="black"  target="_blank" rel="noopener noreferrer">
+          Join Discord
+        </ExternalButton>
       </CommunityBannerInner>
     </CommunityBannerWrapper>
   )
@@ -360,10 +369,13 @@ const App = () => {
                 />
               </Route>
               <Route path="/display">
-                <NFTDisplaySection/>
+                <NFTDisplaySection />
               </Route>
               <Route path="/create">
                 <FactorySection />
+              </Route>
+              <Route path="/connect">
+                <ConnectSection />
               </Route>
               <Route path="/">
                 <Main>

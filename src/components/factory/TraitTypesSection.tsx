@@ -77,14 +77,16 @@ const TraitType = styled.div<TraitTypeProps>`
     }
 `
 
-const TraitTypeTitle = styled.h2`
-    font-size: 1.3rem;
-    margin: 0;
+const TraitTypeTitle = styled.div`
+    
+    color: var(--light-text);
     margin-bottom: .1rem;
+    font-size: .9rem;
 `
 
-const TraitTitle = styled.div`
-    font-size: .85rem;
+const TraitTitle = styled.h2`
+    margin: 0;
+    font-size: 1.2rem;
 `
 
 const TraitTypePreview = styled.img`

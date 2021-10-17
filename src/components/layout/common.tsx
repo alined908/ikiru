@@ -5,9 +5,9 @@ import { metaplexAttribute } from '../../sections/NFTDisplay';
 import VanillaTilt from 'vanilla-tilt';
 import { Link } from 'react-router-dom';
 import { useSpring, config, animated } from 'react-spring';
-
-const MintButton = styled.button`
-`
+import { ButtonProps } from '../../sections/MintSection';
+import { TextEncoder } from 'util';
+import { MintButton } from '../../sections/MintSection';
 
 export const Main = styled.div`
   display: flex;
@@ -50,6 +50,60 @@ const WrappedHeader = styled.div`
     width: 100%;
 `
 
+export const ExternalButton = styled.a<ButtonProps>`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size:  ${props => {
+    if (props.size === 'small') {
+        return '1rem'
+    } else {
+        return '1.2rem'
+    }
+    }};
+    font-weight: 700;
+    color: ${props => props.color ?? "white"};
+    font-family: 'Rubik', sans-serif;
+
+    outline: none;
+    border-radius: .5rem;
+    min-width: ${props => {
+    if (props.size === 'small') {
+        return '100px'
+    } else {
+        return '169px'
+    }
+    }};
+    min-height: ${props => {
+    if (props.size === 'small') {
+        return '45px'
+    } else {
+        return '60px'
+    }
+    }};
+    max-height: 60px;
+    border: none;
+    background: ${props => props.background};
+    transition: all .33s ease;
+
+    &:hover {
+    box-shadow: var(--shadow-l);
+    transform: scale(1.05);
+    background: var(--black-hover);
+    }
+
+    &:disabled {
+    background: grey;
+    cursor: default;
+    box-shadow: none;
+    }
+
+    &:disabled:hover {
+    transform: none;
+    }
+`
+
 const HeaderText = styled.mark`
     display: inline;
     margin-bottom: 2rem;
@@ -65,9 +119,9 @@ export const Wrapper = styled.section`
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    border-bottom: 3px solid black;
     background: transparent;
     flex: 1;
+    width: 100%;
     
 `
 
@@ -78,8 +132,6 @@ export const InnerWrapper = styled.div`
     align-items: center;
     justify-content: center;
     width: var(--body-width);
-    position: relative;
-    left: 7.5%;
 `
 
 export const InnerBody = styled.div`
@@ -133,7 +185,7 @@ export const NumberAnimated = ({newTarget} : any) => {
     return <animated.div>{number.to(n => n.toFixed(2))}</animated.div>
 }
 
-interface AvatarWrapperProps {
+export interface AvatarWrapperProps {
     width: number
     height: number
 }
@@ -163,55 +215,6 @@ export const Avatar = ({image, width, height, kizunaAvatar} : any) => {
         </Link>
     )
 }
-
-export const DisplayAvatarWrapper = styled.div<AvatarWrapperProps>`
-    display: flex;
-    width: ${props => props.width}px;
-    height: ${props => props.height}px;
-    border-radius: .25rem;
-    max-width: 500px;
-`
-
-export const DisplayAvatarTraits = styled.div`
-    display: flex;
-    flex-wrap: wrap;
-    background-color: white;
-    max-width: 400px;
-    font-size: .8rem;
-`
-
-export const DisplayAvatarTrait = styled.div`
-    display: flex;
-    padding: .5rem;
-`
-
-export const DisplayAvatar = ({image, width, height, kizunaAvatar} : any) => {
-
-    // const triggerConnectionChange = () => {
-    //     client = Client
-    // }   
-
-    return (
-        // <Link to={{pathname: '/create', state: {kizunaAvatar: JSON.stringify(kizunaAvatar)}}}>
-            // <Tilt options={tiltOptions}>
-            <div>
-                <DisplayAvatarWrapper width={width} height={height}>
-                    <AvatarImage src={image}/>
-                </DisplayAvatarWrapper>
-                <DisplayAvatarTraits>
-                    {kizunaAvatar.arweaveData.attributes.map((attr : metaplexAttribute) => 
-                        <DisplayAvatarTrait>
-                            {attr.trait_type} - {attr.value}
-                        </DisplayAvatarTrait>
-                    )}
-                </DisplayAvatarTraits>
-                {/* <MintButton onClick={triggerConnectionChange}>Hello</MintButton> */}
-            </div>
-            // </Tilt>
-        // </Link>
-    )
-}
-
 
 // Hook
 // T - could be any type of HTML element like: HTMLDivElement, HTMLParagraphElement and etc.

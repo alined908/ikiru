@@ -58,7 +58,6 @@ const FactorySection = () => {
     },[gender]) 
 
     useEffect(() => {
-        console.log("this is called ")
         let imageLayersCopy = [...imageLayers];
         imageLayersCopy[activeTraitType] = traitsJSONGenderFiltered[activeTrait];
         setImageLayers(imageLayersCopy);

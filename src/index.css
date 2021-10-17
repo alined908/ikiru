@@ -7,7 +7,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: black;
-  background: var(--light-bg);
+  background: rgb(250, 245, 240);
   min-height: 100vh;
   overflow-x: hidden;
 }
@@ -22,9 +22,9 @@ code {
   --shadow-m: 0 .5rem 1rem rgba(0,0,0,.15);
   --shadow-l: 0 1rem 1.25rem rgba(1, 1, 2, 0.2);
   --shadow-xl: 0 1.25rem 1.5rem rgba(0,0,0,.15);
-  --body-width: 50%;
+  --body-width: 40%;
   --border: 1px solid #d3d3d3;
-  --light-bg: rgb(243,245,240);
+  --light-bg: rgb(248,248,245);
   --black-hover: rgba(30, 30, 30, .9);
   --light-text: #6b6f76;
 }

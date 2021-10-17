@@ -17,13 +17,13 @@ import {
   mintOneToken,
   shortenAddress,
 } from "../candy-machine";
-import { Wrapper } from "../components/layout/common";
+import { Wrapper, ExternalButton } from "../components/layout/common";
 import useMeasure from "react-use-measure";
 import Rotatooor from "../components/Rotatooor";
 
 const CounterText = styled.span``; // add your styles here
 
-interface ButtonProps {
+export interface ButtonProps {
   background?: string
   color?: string
   size?: string
@@ -224,6 +224,7 @@ const MintWrapper = styled.div`
   justify-content: center;
   position: absolute;
   top: 30%;
+  flex-wrap: wrap;
 `
 
 const MintSection = (props: HomeProps) => {
