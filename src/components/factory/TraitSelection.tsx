@@ -81,7 +81,7 @@ const TraitSelection = ({gender, activeTraitType, activeTrait, imageLayers, clic
                 showNavigation={false}   
                 animationConfig={config.gentle}
             /> 
-            <ScrollerActions>
+            {/* <ScrollerActions>
                 <Arrow direction={-1} onClick={() => onArrowClick(-1)}>
                     {"<"}
                 </Arrow>
@@ -91,7 +91,7 @@ const TraitSelection = ({gender, activeTraitType, activeTrait, imageLayers, clic
                 <Arrow direction={1} onClick={() => onArrowClick(1)}>
                     {">"}
                 </Arrow>
-            </ScrollerActions>
+            </ScrollerActions> */}
         </TraitScroller>
     )
 }

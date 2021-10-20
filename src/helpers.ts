@@ -1,7 +1,6 @@
 import { Trait } from "./constants";
 
 export const calculateNewIndex = (direction: number, currIndex: number, array: any[]) => {
-    console.log(direction, currIndex, array);
     if (array.length === 1) {
         return 0;
     }

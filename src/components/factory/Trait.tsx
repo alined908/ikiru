@@ -54,7 +54,7 @@ const TraitWrapper = styled.div<TraitWrapperProps>`
     transition: all .25s ease;
     cursor: pointer;
     color: ${props => rarityColor[props.rarity]};
-    background: transparent;
+    background: rgba(250, 250, 250, 0.7);
     box-shadow: 0rem 0.1rem .5rem ${props => rarityColor[props.rarity]};
 `
 

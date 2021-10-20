@@ -37,20 +37,31 @@ export class TraitType implements ITraitType {
     canBeNull: boolean
     layer: number
     traits: Trait[]
+    nameToMaleTraitMapping: {[traitName: string] : Trait}
+    nameToFemaleTraitMapping: {[traitName: string] : Trait}
 
     constructor({name, canBeNull, layer, traits} : ITraitType) {
         this.name = name;
         this.canBeNull = canBeNull;
         this.layer = layer;
         this.traits = traits;
+        this.nameToMaleTraitMapping = {}
+        this.nameToFemaleTraitMapping = {}
+
+        this.traitsFilteredByGender(Gender.Female).map((trait: Trait) => 
+            this.nameToFemaleTraitMapping[trait.name] = trait
+        )
+        this.traitsFilteredByGender(Gender.Male).map((trait: Trait) => 
+            this.nameToMaleTraitMapping[trait.name] = trait
+        )
     }
 
     traitsFilteredByGender(gender: Gender) : Trait[] {
-        //Filter by gender
-        //Return traits
         return this.traits.filter(trait => trait.gender === gender || trait.gender === Gender.Unisex)
     }
 }
+
+export const s3Link = "https://kizuna.s3.us-west-2.amazonaws.com/"
 
 export class Trait implements ITrait{
     name: string
@@ -64,7 +75,7 @@ export class Trait implements ITrait{
         this.probability = probability;
         this.rarity_threshold = rarity_threshold;
         this.gender = gender;
-        this.path = path;
+        this.path = s3Link + path;
     }
 }
 
@@ -122,39 +133,95 @@ export const traitTypes = [
 
 export const BackgroundTraits = [
     new Trait({
-        name: "Night Sky",
+        name: "Blood Moon",
         probability: 2.5,
         rarity_threshold: Rarity.UltraRare,
         gender: Gender.Unisex,
-        path: "traits/unisex/backgrounds/night_sky.png"
+        path: "traits/backgrounds/blood_moon.png"
     }),
     new Trait({
-        name: "Green Sakura",
+        name: "Blue Clouds",
         probability: 2.5,
         rarity_threshold: Rarity.UltraRare,
         gender: Gender.Unisex,
-        path: "traits/unisex/backgrounds/sakura_green.png"
+        path: "traits/backgrounds/blue_clouds.png"
     }),
     new Trait({
-        name: "Solana Seigaha",
+        name: "Cherry Blossom (Dark)",
         probability: 2.5,
         rarity_threshold: Rarity.UltraRare,
         gender: Gender.Unisex,
-        path: "traits/unisex/backgrounds/seigaha_solana.png"
+        path: "traits/backgrounds/cherry_blossom_(dark).png"
+    }),
+    new Trait({
+        name: "Cherry Blossom (Light)",
+        probability: 2.5,
+        rarity_threshold: Rarity.UltraRare,
+        gender: Gender.Unisex,
+        path: "traits/backgrounds/cherry_blossom_(light).png"
+    }),
+    new Trait({
+        name: "Hinomaru",
+        probability: 2.5,
+        rarity_threshold: Rarity.UltraRare,
+        gender: Gender.Unisex,
+        path: "traits/backgrounds/hinomaru.png"
+    }),
+    new Trait({
+        name: "Industrial",
+        probability: 5,
+        rarity_threshold: Rarity.Common,
+        gender: Gender.Unisex,
+        path: "traits/backgrounds/industrial.png"
+    }),
+    new Trait({
+        name: "Night Sky (Galaxy)",
+        probability: 2.5,
+        rarity_threshold: Rarity.UltraRare,
+        gender: Gender.Unisex,
+        path: "traits/backgrounds/night_sky_(galaxy).png"
+    }),
+    new Trait({
+        name: "Night Sky (Moon)",
+        probability: 2.5,
+        rarity_threshold: Rarity.UltraRare,
+        gender: Gender.Unisex,
+        path: "traits/backgrounds/night_sky_(moon).png"
+    }),
+    new Trait({
+        name: "Night Sky (Star)",
+        probability: 5,
+        rarity_threshold: Rarity.Common,
+        gender: Gender.Unisex,
+        path: "traits/backgrounds/night_sky_(star).png"
+    }),
+    new Trait({
+        name: "Pink Clouds",
+        probability: 5,
+        rarity_threshold: Rarity.Common,
+        gender: Gender.Unisex,
+        path: "traits/backgrounds/pink_clouds.png"
     }),
     new Trait({
         name: "Red Square",
-        probability: 2.5,
-        rarity_threshold: Rarity.UltraRare,
+        probability: 5,
+        rarity_threshold: Rarity.Common,
         gender: Gender.Unisex,
-        path: "traits/unisex/backgrounds/square_red.png"
+        path: "traits/backgrounds/red_square.png"
     }),
     new Trait({
         name: "Red Yagasuri",
         probability: 5,
         rarity_threshold: Rarity.Common,
         gender: Gender.Unisex,
-        path: "traits/unisex/backgrounds/yagasuri_red.png"
+        path: "traits/backgrounds/red_yagasuri.png"
+    }),
+    new Trait({
+        name: "Solana Seigaha",
+        probability: 5,
+        rarity_threshold: Rarity.Common,
+        gender: Gender.Unisex,
+        path: "traits/backgrounds/solana_seigaha.png"
     }),
 ]
 
@@ -181,6 +248,13 @@ export const SkinTraits = [
         path: "traits/male/body/tan.png"
     }),
     new Trait({
+        name: "Light",
+        probability: 33,
+        rarity_threshold: Rarity.Common,
+        gender: Gender.Male,
+        path: "traits/male/body/light.png"
+    }),
+    new Trait({
         name: "Pale",
         probability: 33,
         rarity_threshold: Rarity.Common,
@@ -194,6 +268,13 @@ export const SkinTraits = [
         gender: Gender.Female,
         path: "traits/female/body/tan.png"
     }),
+    new Trait({
+        name: "Light",
+        probability: 33,
+        rarity_threshold: Rarity.Common,
+        gender: Gender.Female,
+        path: "traits/female/body/light.png"
+    }),
 ]
 
 export const Skin = new TraitType({
@@ -205,12 +286,40 @@ export const Skin = new TraitType({
 
 export const NeckTraits = [
     new Trait({
-        name: "Tattoo",
+        name: "Stripes",
         probability: 33,
         rarity_threshold: Rarity.Common,
         gender: Gender.Male,
-        path: "traits/male/neck/tattoo.png"
+        path: "traits/male/neck/stripes.png"
     }), 
+    new Trait({
+        name: "Brand",
+        probability: 33,
+        rarity_threshold: Rarity.Common,
+        gender: Gender.Male,
+        path: "traits/male/neck/brand.png"
+    }), 
+    new Trait({
+        name: "Blooming Necklace",
+        probability: 33,
+        rarity_threshold: Rarity.Common,
+        gender: Gender.Female,
+        path: "traits/female/neck/blooming_necklace.png"
+    }), 
+    new Trait({
+        name: "Choker",
+        probability: 33,
+        rarity_threshold: Rarity.Common,
+        gender: Gender.Female,
+        path: "traits/female/neck/choker.png"
+    }),
+    new Trait({
+        name: "Flower Pendant",
+        probability: 33,
+        rarity_threshold: Rarity.Common,
+        gender: Gender.Female,
+        path: "traits/female/neck/flower_pendant.png"
+    }),
     new Trait({
         name: "None",
         probability: 33,
@@ -228,64 +337,244 @@ export const Neck = new TraitType({
 })
 
 export const ClothesTraits = [
-    
     new Trait({
-        name: "Purple Bomber",
+        name: "Black Collared Shirt",
         probability: 7.5,
         rarity_threshold: Rarity.Rare,
         gender: Gender.Male,
-        path: "traits/male/clothes/bomber_purple.png"
+        path: "traits/male/clothes/black_collared_shirt.png"
     }), 
     new Trait({
-        name: "Orange Bomber",
+        name: "Black Hoodie",
         probability: 7.5,
         rarity_threshold: Rarity.Rare,
-        gender: Gender.Female,
-        path: "traits/female/clothes/bomber_orange.png"
+        gender: Gender.Male,
+        path: "traits/male/clothes/black_hoodie.png"
+    }), 
+    new Trait({
+        name: "Black Striped Yukata",
+        probability: 7.5,
+        rarity_threshold: Rarity.Rare,
+        gender: Gender.Male,
+        path: "traits/male/clothes/black_striped_yukata.png"
     }),
     new Trait({
-        name: "Yellow T-Shirt",
+        name: "Black Tee",
         probability: 10,
         rarity_threshold: Rarity.Common,
         gender: Gender.Male,
-        path: "traits/male/clothes/tshirt_yellow.png"
+        path: "traits/male/clothes/black_tee.png"
     }),
     new Trait({
-        name: "Pink T-Shirt",
+        name: "Blue Tee",
         probability: 10,
         rarity_threshold: Rarity.Common,
-        gender: Gender.Female,
-        path: "traits/female/clothes/tshirt_pink.png"
+        gender: Gender.Male,
+        path: "traits/male/clothes/blue_tee.png"
     }),
     new Trait({
-        name: "Uniform",
+        name: "Peach Bomber",
         probability: 7.5,
         rarity_threshold: Rarity.UltraRare,
         gender: Gender.Male,
-        path: "traits/male/clothes/uniform.png"
+        path: "traits/male/clothes/peach_bomber.png"
+    }),
+    new Trait({
+        name: "Purple Bomber",
+        probability: 5,
+        rarity_threshold: Rarity.UltraRare,
+        gender: Gender.Male,
+        path: "traits/male/clothes/purple_bomber.png"
+    }),
+    new Trait({
+        name: "Red Bomber",
+        probability: 5,
+        rarity_threshold: Rarity.UltraRare,
+        gender: Gender.Male,
+        path: "traits/male/clothes/red_bomber.png"
+    }),
+    new Trait({
+        name: "Solana Bomber",
+        probability: 7.5,
+        rarity_threshold: Rarity.UltraRare,
+        gender: Gender.Male,
+        path: "traits/male/clothes/solana_bomber.png"
+    }),
+    new Trait({
+        name: "Brown Jacket Uniform",
+        probability: 5,
+        rarity_threshold: Rarity.UltraRare,
+        gender: Gender.Male,
+        path: "traits/male/clothes/brown_jacket_uniform.png"
+    }),
+    new Trait({
+        name: "Cloud Kimono",
+        probability: 5,
+        rarity_threshold: Rarity.UltraRare,
+        gender: Gender.Male,
+        path: "traits/male/clothes/cloud_kimono.png"
+    }),
+    new Trait({
+        name: "Jersey",
+        probability: 5,
+        rarity_threshold: Rarity.UltraRare,
+        gender: Gender.Male,
+        path: "traits/male/clothes/jersey.png"
+    }),
+    new Trait({
+        name: "Red Hood Outfit",
+        probability: 5,
+        rarity_threshold: Rarity.UltraRare,
+        gender: Gender.Male,
+        path: "traits/male/clothes/red_hood_outfit.png"
+    }),
+    new Trait({
+        name: "Black Uniform",
+        probability: 5,
+        rarity_threshold: Rarity.UltraRare,
+        gender: Gender.Male,
+        path: "traits/male/clothes/black_uniform.png"
+    }),
+    new Trait({
+        name: "Purple Uniform",
+        probability: 5,
+        rarity_threshold: Rarity.UltraRare,
+        gender: Gender.Male,
+        path: "traits/male/clothes/purple_uniform.png"
+    }),
+    new Trait({
+        name: "White Collared Shirt",
+        probability: 5,
+        rarity_threshold: Rarity.UltraRare,
+        gender: Gender.Male,
+        path: "traits/male/clothes/white_collared_shirt.png"
+    }),
+    new Trait({
+        name: "White Hoodie",
+        probability: 5,
+        rarity_threshold: Rarity.UltraRare,
+        gender: Gender.Male,
+        path: "traits/male/clothes/white_hoodie.png"
+    }),
+    new Trait({
+        name: "Yellow Tee",
+        probability: 5,
+        rarity_threshold: Rarity.UltraRare,
+        gender: Gender.Male,
+        path: "traits/male/clothes/yellow_tee.png"
+    }),
+    new Trait({
+        name: "Black Collared Shirt",
+        probability: 7.5,
+        rarity_threshold: Rarity.Rare,
+        gender: Gender.Female,
+        path: "traits/female/clothes/black_collared_shirt.png"
+    }),
+    new Trait({
+        name: "Black Tee",
+        probability: 10,
+        rarity_threshold: Rarity.Common,
+        gender: Gender.Female,
+        path: "traits/female/clothes/black_tee.png"
+    }),
+    new Trait({
+        name: "Blue Striped Yukata",
+        probability: 7.5,
+        rarity_threshold: Rarity.Rare,
+        gender: Gender.Female,
+        path: "traits/female/clothes/blue_striped_yukata.png"
+    }),
+    new Trait({
+        name: "Blue Tee",
+        probability: 10,
+        rarity_threshold: Rarity.Common,
+        gender: Gender.Female,
+        path: "traits/female/clothes/blue_tee.png"
+    }),
+    new Trait({
+        name: "Peach Bomber",
+        probability: 7.5,
+        rarity_threshold: Rarity.UltraRare,
+        gender: Gender.Female,
+        path: "traits/female/clothes/peach_bomber.png"
+    }),
+    new Trait({
+        name: "Purple Bomber",
+        probability: 5,
+        rarity_threshold: Rarity.UltraRare,
+        gender: Gender.Female,
+        path: "traits/female/clothes/purple_bomber.png"
+    }),
+    new Trait({
+        name: "Red Bomber",
+        probability: 5,
+        rarity_threshold: Rarity.UltraRare,
+        gender: Gender.Female,
+        path: "traits/female/clothes/red_bomber.png"
+    }),
+    new Trait({
+        name: "Solana Bomber",
+        probability: 7.5,
+        rarity_threshold: Rarity.UltraRare,
+        gender: Gender.Female,
+        path: "traits/female/clothes/solana_bomber.png"
+    }),
+    new Trait({
+        name: "Brown Jacket Uniform",
+        probability: 5,
+        rarity_threshold: Rarity.UltraRare,
+        gender: Gender.Female,
+        path: "traits/female/clothes/brown_jacket_uniform.png"
+    }),
+    new Trait({
+        name: "Jersey",
+        probability: 5,
+        rarity_threshold: Rarity.UltraRare,
+        gender: Gender.Female,
+        path: "traits/female/clothes/jersey.png"
+    }),
+    new Trait({
+        name: "Pink Tee",
+        probability: 5,
+        rarity_threshold: Rarity.UltraRare,
+        gender: Gender.Female,
+        path: "traits/female/clothes/pink_tee.png"
+    }),
+    new Trait({
+        name: "Purple Kimono",
+        probability: 5,
+        rarity_threshold: Rarity.UltraRare,
+        gender: Gender.Female,
+        path: "traits/female/clothes/purple_kimono.png"
+    }),
+    new Trait({
+        name: "Short Sleeve Sweather",
+        probability: 5,
+        rarity_threshold: Rarity.UltraRare,
+        gender: Gender.Female,
+        path: "traits/female/clothes/short_sleeve_sweather.png"
     }),
     new Trait({
         name: "Uniform",
-        probability: 7.5,
+        probability: 5,
         rarity_threshold: Rarity.UltraRare,
         gender: Gender.Female,
         path: "traits/female/clothes/uniform.png"
     }),
     new Trait({
-        name: "Blue Yukata",
-        probability: 5,
-        rarity_threshold: Rarity.UltraRare,
-        gender: Gender.Male,
-        path: "traits/male/clothes/yukata_blue.png"
-    }),
-    new Trait({
-        name: "Purple Yukata",
+        name: "White Collared Shirt",
         probability: 5,
         rarity_threshold: Rarity.UltraRare,
         gender: Gender.Female,
-        path: "traits/female/clothes/yukata_purple.png"
+        path: "traits/female/clothes/white_collared_shirt.png"
+    }),
+    new Trait({
+        name: "Yellow Tee",
+        probability: 5,
+        rarity_threshold: Rarity.UltraRare,
+        gender: Gender.Female,
+        path: "traits/female/clothes/yellow_tee.png"
     })
-    
 ]
 
 export const Clothes = new TraitType({
@@ -318,11 +607,18 @@ export const ExpressionTraits = [
         path: "traits/male/expression/smirk.png"
     }), 
     new Trait({
-        name: "Open",
+        name: "Closed Eyes",
+        probability: 33,
+        rarity_threshold: Rarity.Common,
+        gender: Gender.Male,
+        path: "traits/male/expression/closed_eyes.png"
+    }), 
+    new Trait({
+        name: "Frown",
         probability: 33,
         rarity_threshold: Rarity.Common,
         gender: Gender.Female,
-        path: "traits/female/expression/open.png"
+        path: "traits/female/expression/frown.png"
     }), 
     new Trait({
         name: "Smile",
@@ -330,6 +626,20 @@ export const ExpressionTraits = [
         rarity_threshold: Rarity.Common,
         gender: Gender.Female,
         path: "traits/female/expression/smile.png"
+    }), 
+    new Trait({
+        name: "Stare",
+        probability: 33,
+        rarity_threshold: Rarity.Common,
+        gender: Gender.Female,
+        path: "traits/female/expression/stare.png"
+    }), 
+    new Trait({
+        name: "Closed Eyes",
+        probability: 33,
+        rarity_threshold: Rarity.Common,
+        gender: Gender.Female,
+        path: "traits/female/expression/closed_eyes.png"
     }), 
 ]
 
@@ -345,22 +655,64 @@ export const EarringTraits = [
         name: "Cross",
         probability: 7.5,
         rarity_threshold: Rarity.Rare,
-        gender: Gender.Unisex,
-        path: "traits/unisex/earrings/cross.png"
+        gender: Gender.Male,
+        path: "traits/male/earrings/cross.png"
     }), 
     new Trait({
         name: "Pearl",
         probability: 7.5,
         rarity_threshold: Rarity.Rare,
-        gender: Gender.Unisex,
-        path: "traits/unisex/earrings/pearl_earring.png"
+        gender: Gender.Male,
+        path: "traits/male/earrings/pearl.png"
     }), 
     new Trait({
         name: "Hanafuda",
         probability: 5,
         rarity_threshold: Rarity.UltraRare,
-        gender: Gender.Unisex,
-        path: "traits/unisex/earrings/hanafuda.png"
+        gender: Gender.Male,
+        path: "traits/male/earrings/hanafuda.png"
+    }), 
+    new Trait({
+        name: "Solana Fire",
+        probability: 7.5,
+        rarity_threshold: Rarity.Rare,
+        gender: Gender.Male,
+        path: "traits/male/earrings/solana_fire.png"
+    }), 
+    new Trait({
+        name: "Studs",
+        probability: 5,
+        rarity_threshold: Rarity.UltraRare,
+        gender: Gender.Male,
+        path: "traits/male/earrings/studs.png"
+    }), 
+    new Trait({
+        name: "Cross",
+        probability: 7.5,
+        rarity_threshold: Rarity.Rare,
+        gender: Gender.Female,
+        path: "traits/female/earrings/cross.png"
+    }), 
+    new Trait({
+        name: "Pearl",
+        probability: 7.5,
+        rarity_threshold: Rarity.Rare,
+        gender: Gender.Female,
+        path: "traits/female/earrings/pearl.png"
+    }), 
+    new Trait({
+        name: "Hanafuda",
+        probability: 5,
+        rarity_threshold: Rarity.UltraRare,
+        gender: Gender.Female,
+        path: "traits/female/earrings/hanafuda.png"
+    }), 
+    new Trait({
+        name: "Solana Fire",
+        probability: 7.5,
+        rarity_threshold: Rarity.Rare,
+        gender: Gender.Female,
+        path: "traits/female/earrings/solana_fire.png"
     }), 
     new Trait({
         name: "None",
@@ -394,13 +746,6 @@ export const FaceAccessoryTraits = [
         path: "traits/male/face_accessory/eyepatch.png"
     }), 
     new Trait({
-        name: "None",
-        probability: 100,
-        rarity_threshold: Rarity.Common,
-        gender: Gender.Unisex,
-        path: "traits/none.png"
-    }),
-    new Trait({
         name: "Bandage",
         probability: 5,
         rarity_threshold: Rarity.Rare,
@@ -408,12 +753,19 @@ export const FaceAccessoryTraits = [
         path: "traits/female/face_accessory/bandage.png"
     }), 
     new Trait({
-        name: "Joker Mask",
+        name: "Medical Eyepatch",
         probability: 5,
         rarity_threshold: Rarity.UltraRare,
         gender: Gender.Female,
-        path: "traits/female/face_accessory/joker_mask.png"
-    }) 
+        path: "traits/female/face_accessory/medical_eyepatch.png"
+    }),
+    new Trait({
+        name: "None",
+        probability: 100,
+        rarity_threshold: Rarity.Common,
+        gender: Gender.Unisex,
+        path: "traits/none.png"
+    }),
 ]
 
 
@@ -433,11 +785,11 @@ export const HairTraits = [
         path: "traits/male/hair/parted.png"
     }), 
     new Trait({
-        name: "Parted 2",
+        name: "Parted Overgrown",
         probability: 20,
         rarity_threshold: Rarity.Rare,
         gender: Gender.Male,
-        path: "traits/male/hair/parted2.png"
+        path: "traits/male/hair/parted_overgrown.png"
     }), 
     new Trait({
         name: "Short",
@@ -447,18 +799,18 @@ export const HairTraits = [
         path: "traits/male/hair/short.png"
     }),
     new Trait({
-        name: "Long",
+        name: "Braided",
         probability: 20,
         rarity_threshold: Rarity.Rare,
         gender: Gender.Female,
-        path: "traits/female/hair/long.png"
+        path: "traits/female/hair/braided.png"
     }), 
     new Trait({
-        name: "Bonnet",
+        name: "Bun",
         probability: 20,
         rarity_threshold: Rarity.Rare,
         gender: Gender.Female,
-        path: "traits/female/hair/bonnet.png"
+        path: "traits/female/hair/bun.png"
     }), 
     new Trait({
         name: "Ponytail",
@@ -466,6 +818,20 @@ export const HairTraits = [
         rarity_threshold: Rarity.Common,
         gender: Gender.Female,
         path: "traits/female/hair/ponytail.png"
+    }),
+    new Trait({
+        name: "Short",
+        probability: 20,
+        rarity_threshold: Rarity.Rare,
+        gender: Gender.Female,
+        path: "traits/female/hair/short.png"
+    }), 
+    new Trait({
+        name: "Short Ribbons",
+        probability: 20,
+        rarity_threshold: Rarity.Common,
+        gender: Gender.Female,
+        path: "traits/female/hair/short_ribbons.png"
     })
 ]
 
@@ -488,11 +854,32 @@ export const HeadAcccessoryTraits = [
         path: "traits/male/head_accessory/fox_mask.png"
     }),
     new Trait({
+        name: "Mask",
+        probability: 5,
+        rarity_threshold: Rarity.Common,
+        gender: Gender.Male,
+        path: "traits/male/head_accessory/mask.png"
+    }),
+    new Trait({
         name: "Fox Mask",
         probability: 5,
         rarity_threshold: Rarity.Common,
         gender: Gender.Female,
         path: "traits/female/head_accessory/fox_mask.png"
+    }),
+    new Trait({
+        name: "Flower",
+        probability: 5,
+        rarity_threshold: Rarity.Common,
+        gender: Gender.Female,
+        path: "traits/female/head_accessory/flower.png"
+    }),
+    new Trait({
+        name: "Mask",
+        probability: 5,
+        rarity_threshold: Rarity.Common,
+        gender: Gender.Female,
+        path: "traits/female/head_accessory/mask.png"
     }),
     new Trait({
         name: "None",
@@ -521,6 +908,18 @@ export const traitsJSON : TraitType[] = [
     Hair,
     HeadAccessory
 ]
+
+export const traitTypesMapping = {
+    'Background': Background,
+    'Skin': Skin,
+    'Neck': Neck,
+    'Clothes': Clothes,
+    'Expression': Expression,
+    'Earring': Earring,
+    'Face Accessory': FaceAccessory,
+    'Hair': Hair,
+    'Head Accessory': HeadAccessory
+}
 
 export const genderMapping = {
     'Female': Gender.Female,

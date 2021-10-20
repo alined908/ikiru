@@ -14,14 +14,14 @@ import {
   WalletProvider,
   useConnection
 } from "@solana/wallet-adapter-react";
-import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { useAnchorWallet } from "@solana/wallet-adapter-react";
+import { animated, useSpring } from "react-spring";
+import { useWallet } from "@solana/wallet-adapter-react";
 import { WalletModalProvider, WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import styled from 'styled-components';
 import TeamSection from "./sections/TeamSection";
 import NFTDisplaySection from "./sections/NFTDisplay";
 import MintSection from "./sections/MintSection";
-import AboutUsSection from "./sections/AboutUsSection";
 import FactorySection from "./sections/FactorySection";
 import ConnectSection from "./sections/ConnectSection";
 import {Main, Body, InnerBody, ExternalButton} from './components/layout/common';
@@ -31,7 +31,9 @@ import { BrowserRouter as Router,Switch,Route,Link, useLocation} from "react-rou
 import { Sakura } from './sections/FAQSection';
 import SocialMediaComponent from "./components/social/SocialMedia";
 import { AnimateSharedLayout, motion } from "framer-motion";
+import { useMediaQuery } from 'react-responsive'
 import { Gender, KizunaAvatar } from "./constants";
+import InfoSection from "./sections/InfoSection";
 import { random } from "lodash";
 
 const network = process.env.REACT_APP_SOLANA_NETWORK as WalletAdapterNetwork;
@@ -42,7 +44,159 @@ const rpcHost = process.env.REACT_APP_SOLANA_RPC_HOST!;
 const connection = new anchor.web3.Connection(rpcHost);
 const startDateSeed = parseInt(process.env.REACT_APP_CANDY_START_DATE!, 10);
 const txTimeout = 30000; // milliseconds (confirm this works for your project)
+const quickNodeEndpoint = 'https://spring-wispy-firefly.solana-devnet.quiknode.pro/eb692f52d5469705a1a6f6c80f719b2b4dedefe0/';
 
+
+const LandingWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 11;
+  height: 100%;
+  overflow: hidden;
+  overflow-y: hidden;
+  position: relative;
+`
+
+const LandingCall = styled.div`
+  font-size: 2.5rem;
+  font-weight: 600;
+  margin-top: 3rem;
+`
+
+const LandingSplash = styled.div`
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  justify-content: center;
+  background-image: url('/backgrounds/cherry_blossom.png');
+  filter: blur(5px);
+  opacity: .8;
+  flex-direction: column;
+  align-items: center;
+`
+
+const LandingImage = styled.img`
+  position: absolute;
+  transition: all .3s ease;
+
+  @media (min-width: 1920px) {
+    width: 100%;
+  }
+
+  @media (max-width: 1920px) {
+    height:100%;
+  }
+`
+
+const Landing = ({children} : any) => {
+
+  return (
+    <LandingWrapper>
+      <LandingSplash>
+        
+     
+      </LandingSplash>
+      <LandingImage src="./backgrounds/landing.png"/>
+    </LandingWrapper>
+  )
+}
+
+const CommunityBannerWrapper = styled.div`
+  display: flex;
+  position: relative;
+  background-image: url('/backgrounds/cherry_blossom.png');
+  height: 300px;
+  justify-content: center;
+  flex-direction: column;
+  background-position: top;
+  z-index: 10;
+  background-size: cover;
+  border-top: 3px solid black;
+  box-shadow: var(--shadow-l);
+  border-bottom: 3px solid black;
+`
+
+const CommunityCall = styled.h1`
+  font-size: 3rem;
+  margin-top: 0;
+  color: rgba(0, 0, 0, .9);
+`
+
+const CommunityBannerInner = styled.div`
+
+  max-width: 1000px;
+  margin: auto;
+
+  p {
+    color: black;
+    max-width: 500px;
+  }
+`
+
+const CommunityBanner = () => {
+  return (
+    <CommunityBannerWrapper id="banner">
+      <CommunityBannerInner>
+        <ExternalButton href="https://discord.gg/UeRDFmRU" background="black"  target="_blank" rel="noopener noreferrer">
+          Join Discord
+        </ExternalButton>
+      </CommunityBannerInner>
+    </CommunityBannerWrapper>
+  )
+}
+
+interface WrappedHeaderProps {
+  isHome : boolean
+} 
+
+const deviceSizes = {
+  mobile: '(max-width: 500px)',
+  laptop: '(max-width: 1050px)',
+}
+
+const WrappedHeader = styled.div<WrappedHeaderProps>`
+  display: flex;
+  width: 100%;
+  margin: 0 auto;
+  z-index: 12;
+  position: absolute;
+  top: 0;
+  background: transparent;
+
+  & > div {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  a {
+    color: black;
+    &:hover {
+      transition: all .33s ease;
+      color: pink;
+    }
+
+    div {
+      fill:  black;
+
+      &:hover {
+        transition: all .33s ease;
+        fill: pink;
+      }
+    }
+  }  
+`
+
+const InnerHeader = styled.div<WrappedHeaderProps>`
+  display: flex;
+  width: 95%;
+  justify-content: space-between;
+  padding: 1rem 3rem;
+  align-items: center;
+  background: transparent;
+  border-radius: .7rem;
+`
 
 const Navigation = styled.div`
   display: flex;
@@ -69,105 +223,13 @@ const NavigationTab = styled.div`
   display: flex;
   padding: 1.5rem;
   font-weight: 800;
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   align-items: center;
-`
-
-const LandingWrapper = styled.div`
-  display: flex;
-  height: 100vh;
-  justify-content: center;
-  align-items: center;
-`
-
-const CommunityBannerWrapper = styled.div`
-  display: flex;
-  position: relative;
-  background-image: linear-gradient(rgba(142, 158, 171, 0.2), rgba(66, 134, 244, 0.1)), url('/traits/unisex/backgrounds/sakura_green.png');
-  height: 400px;
-  justify-content: center;
-  flex-direction: column;
-  background-position: top;
-  z-index: 10;
-  background-size: cover;
-  border-top: 3px solid black;
-  box-shadow: var(--shadow-l);
-  border-bottom: 3px solid black
-`
-
-const CommunityCall = styled.h1`
-  font-size: 3rem;
-  margin-top: 0;
-  color: rgba(0, 0, 0, .9);
-`
-
-const CommunityBannerInner = styled.div`
-
-  max-width: 1000px;
-  margin: auto;
-
-  p {
-    color: black;
-    max-width: 500px;
-  }
-`
-
-interface WrappedHeaderProps {
-  isHome : boolean
-} 
-
-const WrappedHeader = styled.div<WrappedHeaderProps>`
-  display: flex;
-  position: absolute;
-  top:0;
-  width: 100%;
-  margin: 0 auto;
-  padding: 1.5rem 0;
-  justify-content: space-between;
-  z-index: 10;
-  
-  a {
-    color: ${props => props.isHome ? 'white' : 'black'};
-    &:hover {
-      transition: all .33s ease;
-      color: pink;
-    }
-
-    div {
-      fill:  ${props => props.isHome ? 'white' : 'black'};
-
-      &:hover {
-        transition: all .33s ease;
-        fill: pink;
-      }
-    }
-  }
-`
-
-const InnerHeader = styled.div<WrappedHeaderProps>`
-  display: flex;
-  margin: 0 auto;
-  padding: 0 1.5rem;
-  align-items: center;
-  background: ${props => props.isHome ? 'rgba(30, 30, 30, .7)' : 'transparent'};
-  border-radius: .7rem;
-  box-shadow: ${props => props.isHome ? 'var(--shadow-s)' : ''} ;
 `
 
 const NavActionBar = styled.div`
   display: flex;
   align-items: center;
-`
-
-const LandingSplash = styled.div`
-  display: flex;
-  width: auto;
-  height: auto;
-  background: wheat;
-`
-
-const LandingImage = styled.img`
-  height: auto;
 `
 
 const NavLink = styled(Link)`
@@ -178,109 +240,172 @@ const NavLink = styled(Link)`
   }
 `
 
-const quickNodeEndpoint = 'https://spring-wispy-firefly.solana-devnet.quiknode.pro/eb692f52d5469705a1a6f6c80f719b2b4dedefe0/';
-
-const Landing = ({children} : any) => {
-
-  return (
-    <LandingWrapper>
-      <LandingSplash>
-        <LandingImage src="./backgrounds/landing.png"/>
-      </LandingSplash>
-    </LandingWrapper>
-  )
-}
-
-
-
-const CommunityBanner = () => {
-  const redirectToDiscord = () => {
-    console.log('hello')
-    
-  }
-
-  return (
-    <CommunityBannerWrapper id="banner">
-      <CommunityBannerInner>
-        <CommunityCall>
-          Kizuna
-        </CommunityCall>
-        <ExternalButton href="https://discord.gg/UeRDFmRU" background="black"  target="_blank" rel="noopener noreferrer">
-          Join Discord
-        </ExternalButton>
-      </CommunityBannerInner>
-    </CommunityBannerWrapper>
-  )
-}
+const navigationLinks = [
+  {name: "About", path: "/about"},
+  {name: "Create", path: "/create"},
+  {name: "Mint", path: "/mint"},
+  {name: "Display", path: "/display"},
+  {name: "Connect", path: "connect"}
+]
 
 const Header = () => {
   const location = useLocation();
-  const { connection } = useConnection();
-  const wallet = useAnchorWallet();
+  // const wallet = useWallet();
+  const isHome = location.pathname === '/';
+  const [displayHeader, setDisplayHeader] = useState(false);
+  const headerProps = useSpring({
+    opacity: displayHeader ? 1 : 0,
+    marginTop: displayHeader ? 0 : -50
+  })
+  const isMobileNav = useMediaQuery({ query: '(max-width: 1050px)' });
+  const [isMobileNavOpen, setMobileNavOpen] = useState(false);
   
   useEffect(() => {
-    (async () => {
-      if (wallet) {
-        const balance = await connection.getBalance(wallet.publicKey);
-        console.log(balance/LAMPORTS_PER_SOL);
-      }
-    })();
-  }, [wallet, connection]);
-
-  // function handleScroll() {
-  //   const header = document.getElementById('header');
-
-  //   if (window.pageYOffset > 0) {
-  //     header?.classList.add("sticky")
-  //   } else {
-  //     header?.classList.remove('sticky');
-  //   }
-  // }
-
-  // const throttledHandler = useMemo(() => throttle(handleScroll, 300), []);
-
-  // useEffect(() => {  
-  //   window.addEventListener('scroll', throttledHandler);
-
-  //   return () => {
-  //     window.removeEventListener("scroll", throttledHandler);
-  //   };
-  // }, [])
+    if (!displayHeader) {
+      setTimeout(() => setDisplayHeader(true), 1000)
+    }
+  },[])
 
   return (
-    <WrappedHeader id="header" isHome={location.pathname === '/'}>
-      <InnerHeader isHome={location.pathname === '/'}>
-        <Navigation>
-          <NavigationTabs>
+    
+      <WrappedHeader isHome={isHome}>
+        {isMobileNavOpen && <NavigationMobile close={() => setMobileNavOpen(false)} />}
+        <animated.div style={headerProps}>
+        <InnerHeader isHome={isHome}>
+          <Navigation>
             <NavigationTab>
-              <NavLink to="/create">Create</NavLink>
-            </NavigationTab>
-            <NavigationTab>
-              <NavLink to="/mint">Mint</NavLink>
-            </NavigationTab>
-            <NavigationTab>
-              <Link to="/">
-                <Logo>
-                  <Sakura src={`./sakura/red_sakura.png`}/>
-                  Kizuna
-                </Logo>
-              </Link>
-            </NavigationTab>
-            <NavigationTab>
-              <NavLink to="/display">Display</NavLink>
-            </NavigationTab>
-            <NavigationTab>
-              <NavLink to="/connect">Connect</NavLink>
-            </NavigationTab>
-          </NavigationTabs>
-        </Navigation>
-        <NavActionBar>
-          <SocialMediaComponent type="discord" link="https://discord.gg/58hBq6hWH2"/>
-          <SocialMediaComponent type="twitter" link="https://twitter.com/"/>
-          <WalletMultiButton></WalletMultiButton>
-        </NavActionBar>
-      </InnerHeader>
-    </WrappedHeader>
+                <Link to="/">
+                  <Logo>
+                    <Sakura src={`./sakura/red_sakura.png`}/>
+                    Kizuna
+                  </Logo>
+                </Link>
+              </NavigationTab>
+            
+          </Navigation>
+          {!isMobileNav ? 
+              <NavActionBar>
+                <NavigationTabs>
+                  {navigationLinks.map((navLink) => 
+                  <NavigationTab>
+                    <NavLink to={navLink.path}>{navLink.name}</NavLink>
+                  </NavigationTab>
+                  )}
+                </NavigationTabs>
+                <SocialMediaComponent type="discord" link="https://discord.gg/58hBq6hWH2"/>
+                <SocialMediaComponent type="twitter" link="https://twitter.com/kizunanft"/>
+                <WalletMultiButton></WalletMultiButton>
+                
+              </NavActionBar>
+            :
+            <Burger onClick={() => setMobileNavOpen(true)}>
+              <span/>
+              <span/>
+              <span/>
+            </Burger>     
+          }
+        </InnerHeader>
+        </animated.div>
+      </WrappedHeader>
+    
+  )
+}
+
+const WrappedNavMobile = styled.div`
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  height: 100vh;
+  width: 100vw;
+  background-color: black;
+  z-index: 14;
+`
+
+const closeContent = `
+  position: absolute;
+  left: 15px;
+  content: ' ';
+  height: 33px;
+  width: 4px;
+  background-color: white;
+`
+
+const CloseButton = styled.div`
+
+  position: absolute;
+  right: 3rem;
+  top: 3rem;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  z-index: 15;
+
+  &:before {
+    ${closeContent}
+    transform: rotate(45deg);
+  }
+
+  &:after {
+    ${closeContent}
+    transform: rotate(-45deg);
+  }
+
+  &:hover::before {
+    background-color: pink;
+  }
+
+  &:hover::after {
+    background-color: pink;
+  }
+`
+
+const Burger = styled.div`
+  cursor: pointer;
+  span {
+      display: block;
+      width: 30px;
+      height: 4px;
+      margin-bottom: 5px;
+      position: relative;
+      background: black;
+      border-radius: 10px;
+      z-index: 1;
+  }
+`
+
+const NavMobileLinks = styled.div`
+  padding: 3rem;
+
+  a {
+    color: white;
+    &:hover {
+      transition: all .33s ease;
+      color: pink;
+    }
+  }
+`
+
+interface NavigationMobileProps {
+  close: () => void
+}
+
+const NavigationMobile = ({close} : NavigationMobileProps) => {
+  return (
+    <WrappedNavMobile>
+      <CloseButton onClick={close}/>
+      <NavMobileLinks>
+        {navigationLinks.map((navLink) => 
+          <NavigationTab>
+              <NavLink to={navLink.path}>
+                <span  onClick={close}>
+                 {navLink.name}
+                </span>
+                
+              </NavLink>
+          </NavigationTab>
+        )}
+      </NavMobileLinks>
+    </WrappedNavMobile>
   )
 }
 
@@ -290,7 +415,7 @@ const WrappedSakura = styled(Sakura)`
 
 const Flowers = styled.div`
   display: flex;
-  margin-top: -5rem;
+
   opacity: .7;
 `
  
@@ -323,17 +448,13 @@ const BodyComponent = () => {
 
   return (
     <Body ref={bodyRef}>
-      <Flowers>
+      {/* <Flowers>
         <AnimateSharedLayout>
-        {isLoaded && renderFlowers().map((flower) => flower)}
+          {isLoaded && renderFlowers().map((flower) => flower)}
         </AnimateSharedLayout>
-        
-      </Flowers>
+      </Flowers> */}
       <InnerBody>
-        <AboutUsSection/>
-        <FAQSection/>
-        <RoadMapSection/>
-        <TeamSection/>
+        
       </InnerBody>
     </Body>
   )
@@ -351,12 +472,13 @@ const App = () => {
     ],[]
   );
 
+
   return (
     <ConnectionProvider endpoint={endpoint}>
       <WalletProvider wallets={wallets} autoConnect>
         <WalletModalProvider logo="./sakura/pink_sakura.png">
           <Router>
-            <Header/>
+            <Header />
             <Switch>
               <Route path="/mint">
                 <MintSection
@@ -368,8 +490,16 @@ const App = () => {
                   txTimeout={txTimeout}
                 />
               </Route>
+              <Route path="/display/:id">
+                <div>
+                  Something here
+                </div>
+              </Route>
               <Route path="/display">
                 <NFTDisplaySection />
+              </Route>
+              <Route path="/about">
+                <InfoSection/>
               </Route>
               <Route path="/create">
                 <FactorySection />
@@ -380,8 +510,8 @@ const App = () => {
               <Route path="/">
                 <Main>
                   <Landing/>
-                  <CommunityBanner/>
-                  <BodyComponent/>
+                  {/* <BodyComponent/> */}
+                  {/* <CommunityBanner/> */}
                 </Main>
               </Route>
             </Switch>

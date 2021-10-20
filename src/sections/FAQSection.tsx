@@ -27,7 +27,7 @@ const QnAs = [
     question: "Who are we?",
     answer: `
       <div>
-        Hi! We're friends who have been captivated by the Solana ecosystem
+        We're friends who have been captivated by the Solana ecosystem
       </div>
       &nbsp;
       <div>
@@ -74,13 +74,13 @@ const QuestionAnswerWrapper = styled.div`
 const QuestionWrapper = styled.div`
   display: flex;
   align-items: center;
-  font-size: 1.6rem;
+  font-size: 1.3rem;
   font-weight: 600;
   padding: 0 ;
 `
 
 const AnswerWrapper = styled.div`
-  font-size: 1.1rem;
+  font-size: 1rem;
   padding: 1.25rem 0;
   color: var(--light-text);
 `
@@ -113,20 +113,17 @@ const Question = ({question} : any ) => {
 
 const FAQSection = () => {
     return (
-      <Wrapper>
-        <InnerWrapper>
+
+      <div> 
           <Header text="Questions"/>
           <Content>
             <QuestionAnswers>
-              {QnAs.map((pair) => 
-                <QuestionAnswer data={pair}/>
+              {QnAs.map((pair, index) => 
+                <QuestionAnswer key={index} data={pair}/>
               )}
             </QuestionAnswers>
           </Content>
-        </InnerWrapper>
-        
-      </Wrapper>
-      
+      </div>
     )
   }
 

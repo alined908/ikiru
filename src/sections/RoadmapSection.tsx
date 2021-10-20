@@ -23,7 +23,7 @@ const Number = styled.div`
 `
 
 const Goal = styled.div`
-    font-size: 1.6rem;
+    font-size: 1.3rem;
     font-weight: 600;
     margin-bottom: 1rem;
 `
@@ -37,7 +37,7 @@ const TargetGoal = styled.div`
 `
 
 const Description = styled.div`
-    font-size: 1.1rem;
+    font-size: 1rem;
     color: var(--light-text);
 `
 
@@ -80,23 +80,22 @@ const goals : Goal[] = [
 
 const RoadMapSection = () => {
     return (
-        <Wrapper>
-            <InnerWrapper>
-                <Header text="Roadmap"/>
-                <Content>
-                    <WrappedRoadmap>
-                        {[0, 1, 2, 3].map((num) => 
-                            <WrappedTarget>
-                                <TargetGoal>
-                                    <Goal>{goals[num].goal}</Goal>
-                                    <Description dangerouslySetInnerHTML={{__html: goals[num].description}}></Description>
-                                </TargetGoal>
-                            </WrappedTarget>
-                        )}
-                    </WrappedRoadmap>
-                </Content>
-            </InnerWrapper>
-        </Wrapper>
+        <div>
+            <Header text="Roadmap"/>
+            <Content>
+                <WrappedRoadmap>
+                    {[0, 1, 2, 3].map((num) => 
+                        <WrappedTarget key={num}>
+                            <TargetGoal>
+                                <Goal>{goals[num].goal}</Goal>
+                                <Description dangerouslySetInnerHTML={{__html: goals[num].description}}></Description>
+                            </TargetGoal>
+                        </WrappedTarget>
+                    )}
+                </WrappedRoadmap>
+            </Content>
+        </div>
+       
     )
 }
 

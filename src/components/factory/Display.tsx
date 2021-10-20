@@ -54,8 +54,10 @@ const Display = ({imageLayers, generateRandomAvatar, clearCanvas} : DisplayProps
     const bearRef = useRef(null);
 
     const downloadImage = () => {
-        domtoimage.toBlob(bearRef.current!).then((blob) => {
+        let options = { "cacheBust":true }
+        domtoimage.toBlob(bearRef.current!, options).then((blob) => {
             saveAs(blob, 'test.png');
+            
         })
     }
 
@@ -65,7 +67,7 @@ const Display = ({imageLayers, generateRandomAvatar, clearCanvas} : DisplayProps
                 <BuildABear ref={bearRef}>
                     {(imageLayers).map((trait: ITrait | null, index: number) => {
                         if (trait) {
-                            return <Layer layer={index} src={trait.path}/>
+                            return <Layer key={index} layer={index} src={trait.path}/>
                         } 
                     })}
                 </BuildABear>

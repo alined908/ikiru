@@ -86,7 +86,7 @@ const TraitTypeTitle = styled.div`
 
 const TraitTitle = styled.h2`
     margin: 0;
-    font-size: 1.2rem;
+    font-size: 1.05rem;
 `
 
 const TraitTypePreview = styled.img`

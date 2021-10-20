@@ -5,13 +5,14 @@ import * as web3 from '@solana/web3.js';
 import {deserializeUnchecked} from "borsh";
 import { useEffect, useState } from 'react';
 import { PublicKey } from '@solana/web3.js';
-import { BinaryReader, BinaryWriter } from 'borsh';
+import { BinaryReader, BinaryWriter, serialize } from 'borsh';
 import axios from 'axios';
 import base58 from 'bs58';
 import nacl from 'tweetnacl';
 import { AnchorWallet, useAnchorWallet, useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { Gender, KizunaAvatar, Trait, traitsJSON, genderMapping } from '../constants';
 import { MintButton } from './MintSection';
+import { Link } from 'react-router-dom';
 
 export const extendBorsh = () => {
     (BinaryReader.prototype as any).readPubkey = function () {
@@ -108,6 +109,23 @@ export class Metadata {
   }
 }
 
+class UpdateMetadataArgs {
+  instruction: number = 1;
+  data: Data | null;
+  // Not used by this app, just required for instruction
+  updateAuthority: string | null;
+  primarySaleHappened: boolean | null;
+  constructor(args: {
+    data?: Data;
+    updateAuthority?: string;
+    primarySaleHappened: boolean | null;
+  }) {
+    this.data = args.data ? args.data : null;
+    this.updateAuthority = args.updateAuthority ? args.updateAuthority : null;
+    this.primarySaleHappened = args.primarySaleHappened;
+  }
+}
+
 export interface metaplexAttribute {
   trait_type: string
   value: any
@@ -132,6 +150,18 @@ export interface arweaveData {
 }
 
 export const METADATA_SCHEMA = new Map<any, any>([
+  [
+    UpdateMetadataArgs,
+    {
+      kind: 'struct',
+      fields: [
+        ['instruction', 'u8'],
+        ['data', { kind: 'option', type: Data }],
+        ['updateAuthority', { kind: 'option', type: 'pubkeyAsString' }],
+        ['primarySaleHappened', { kind: 'option', type: 'u8' }],
+      ],
+    },
+  ],
   [
       Data,
       {
@@ -167,6 +197,7 @@ export const METADATA_SCHEMA = new Map<any, any>([
               ['data', Data],
               ['primarySaleHappened', 'u8'], // bool
               ['isMutable', 'u8'], // bool
+              ['editionNonce', { kind: 'option', type: 'u8' }]
           ],
       },
   ],
@@ -247,9 +278,7 @@ const NFTDisplaySection = () => {
       }
 
       //filter by update authority or by collection name
-      console.log(nftMetadata);
       const filteredNFTs = nftMetadata.filter((metadata : Metadata) => metadata.updateAuthority === updateAuthority);
-      console.log(filteredNFTs);
 
       for (let i = 0; i < filteredNFTs.length; i++) {
         let metadata = filteredNFTs[i];
@@ -300,16 +329,22 @@ const NFTDisplaySection = () => {
       <Wrapper>
         <Content>
           <Display>
+            <h1>Your NFTs</h1>
+            <div>
             {displayNFTs.map((displayNFT : DisplayNFT) => 
               <DisplayAvatar 
-                width={380} 
-                height={380} 
+                key={displayNFT.mint}
+                width={300} 
+                height={300} 
                 image={displayNFT.kizunaAvatar.image!} 
                 kizunaAvatar={displayNFT.kizunaAvatar}
                 metadata={displayNFT.metadata}
                 arweaveData={displayNFT.arweaveData}
+                mint={displayNFT.mint}
               />
             )}
+            </div>
+            <h1>Your Connections</h1>
           </Display>
         </Content>
         
@@ -356,13 +391,14 @@ interface DisplayAvatarProps {
   width: number
   height: number
   kizunaAvatar: KizunaAvatar
+  mint: string
   arweaveData: arweaveData
   metadata: Data
 }
 
-  export const DisplayAvatar = ({image, width, height, kizunaAvatar, arweaveData, metadata} : DisplayAvatarProps) => {
+  export const DisplayAvatar = ({image, width, height, kizunaAvatar, mint, arweaveData, metadata} : DisplayAvatarProps) => {
     const wallet = useWallet();
-    const connection = useConnection();
+    const connection = useConnection().connection;
 
     const signMessage = async () => {
         // const connection : web3.Connection = new anchor.web3.Connection(QUICKNODE_URL);
@@ -390,7 +426,7 @@ interface DisplayAvatarProps {
       arweaveData: arweaveData
     }
 
-    const changeMetadata = async ({mintTokenId, metadata, arweaveData} : changeMetadataParams) => {
+    const changeMetadata = async ({mintTokenId, metadata, arweaveData} : changeMetadataParams)  => {
       // 1. Make owner sign request
       // 1. Send request with new name/connection field  
       // 2. Check on backend that the request rightfully came from owner of nft (might have to query with tokenid?)
@@ -398,41 +434,56 @@ interface DisplayAvatarProps {
       // 3. Send back new arweave link, where client triggers a transaction to change metadata field of nft OR creator_address has permission to change? (this doesnt seem correct tho)
       // 4. On success, query new token state 
 
-      const METADATA_PROGRAM_ID = new web3.PublicKey('metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s')
-
-      let sourceAccount = wallet.publicKey;
-      let name = metadata.name;
-      let symbol = metadata.symbol;
-      let link = metadata.uri;
-      let fee = metadata.sellerFeeBasisPoints;
-      let creatorsAddresses = metadata.creators!.map((creator: Creator) => creator.address);
-      let creatorsVerified = metadata.creators!.map((creator: Creator) => creator.verified);
-      let creatorsShare = metadata.creators!.map((creator : Creator) => creator.share);
-
-
-      let mintKey = new web3.PublicKey(mintTokenId);
-
-
-      let transactionData : Buffer = Buffer.from('2');
-      
-
+      const METADATA_PROGRAM_ID = new web3.PublicKey('metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s');
+      const mintKey = new web3.PublicKey(mintTokenId);
       let seeds : Buffer[] = [Buffer.from('metadata'), METADATA_PROGRAM_ID.toBuffer(), mintKey.toBuffer()]
-      let metadataAccount = await PublicKey.findProgramAddress(seeds, METADATA_PROGRAM_ID);
+      let metadataAccount = (await PublicKey.findProgramAddress(seeds, METADATA_PROGRAM_ID))[0];
+      let newData = metadata;
+      newData.uri = 'https://kizuna.s3.us-west-2.amazonaws.com/0.json'
+
+      const value = new UpdateMetadataArgs({
+        data : newData,
+        updateAuthority: updateAuthority,
+        primarySaleHappened: true
+      })
+      
+      console.log(serialize(METADATA_SCHEMA, value))
+      const transactionData : Buffer = Buffer.from(serialize(METADATA_SCHEMA, value));
+      
+      const keys = [
+        {pubkey: new PublicKey(metadataAccount), isSigner: false, isWritable: true},
+        {pubkey: new PublicKey(updateAuthority), isSigner: true, isWritable: false}
+      ]
     
       let transactionInstruction = new web3.TransactionInstruction({
-        keys: [
-          {pubkey: new PublicKey(metadataAccount), isSigner: false, isWritable: true},
-          {pubkey: new PublicKey(sourceAccount!), isSigner: true, isWritable: false}
-        ],
+        keys,
         programId: METADATA_PROGRAM_ID,
         data: transactionData
       });
-
       let transaction = new web3.Transaction().add(transactionInstruction);
+    
+      transaction.recentBlockhash = (await connection.getRecentBlockhash()).blockhash;
+      transaction.feePayer = wallet.publicKey!;
       
       try {
-        const request = await wallet.sendTransaction(transaction, connection.connection);
-        console.log(request);
+        console.log(wallet.publicKey?.toString());
+        const signRequest = await wallet.signTransaction!(transaction);
+        console.log(signRequest);
+        try {
+          const transactionId = await connection.sendRawTransaction(signRequest.serialize());
+          console.log(transactionId)
+
+          try {
+            await connection.confirmTransaction(transactionId);
+            console.log(transactionId);
+          } catch (e) {
+            console.log(e);
+          }
+        } catch (e) {
+          console.log(e);
+        }
+        
+        
       } catch (e) {
         console.log(e);
       }
@@ -442,20 +493,23 @@ interface DisplayAvatarProps {
         // <Link to={{pathname: '/create', state: {kizunaAvatar: JSON.stringify(kizunaAvatar)}}}>
             // <Tilt options={tiltOptions}>
             <div>
-                <DisplayAvatarWrapper width={width} height={height}>
-                    <AvatarImage src={image}/>
-                </DisplayAvatarWrapper>
+                <Link to={`/display/${arweaveData.name.split('#')[1]}`}>
+                  <DisplayAvatarWrapper width={width} height={height}>
+                      <AvatarImage src={image}/>
+                  </DisplayAvatarWrapper>
+                </Link>
+                
                 <h3>Attributes</h3>
                 <DisplayAvatarTraits>
-                    {kizunaAvatar.arweaveData!.attributes.map((attr : metaplexAttribute) => 
-                        <DisplayAvatarTrait>
+                    {kizunaAvatar.arweaveData!.attributes.map((attr : metaplexAttribute, index: number) => 
+                        <DisplayAvatarTrait key={index}>
                             <div>{attr.trait_type}</div>
                             <span>{attr.value}</span>
                         </DisplayAvatarTrait>
                     )}
                 </DisplayAvatarTraits>
-                <MintButton background="black" onClick={signMessage}>Sign Message</MintButton>
-                <MintButton background="black" onClick={() => changeMetadata()}>Change Thingy</MintButton>
+                {/* <MintButton background="black" size="small" onClick={signMessage}>Sign Message</MintButton> */}
+                <MintButton background="black" size="small" onClick={() => changeMetadata({mintTokenId: mint, metadata, arweaveData})}>Change Thingy</MintButton>
             </div>
             // </Tilt>
         // </Link>

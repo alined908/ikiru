@@ -2,7 +2,8 @@ import styled from 'styled-components';
 import {Header, Wrapper, Content, InnerWrapper} from '../components/layout/common';
 import SocialMediaComponent from '../components/social/SocialMedia';
 import { Avatar } from '../components/layout/common';
-import {Gender, Trait, KizunaAvatar, traitsJSON} from '../constants';
+import { s3Link } from '../constants';
+import {Gender, Trait, KizunaAvatar, traitsJSON, traitTypesMapping} from '../constants';
 
 const Description = styled.div`
     display: flex;
@@ -16,6 +17,7 @@ const Team = styled.div`
     min-width: 1000px;
     grid-template-columns: 50% 50%;
     grid-row-gap: 3rem;
+    justify-items: center;
 `
 
 const MemberWrapper = styled.div`
@@ -41,15 +43,15 @@ const MemberStory = styled.div`
 //Todo - Remap words -> posiiton
 
 const danielTraits : Trait[] = [
-    traitsJSON[0].traits[0], 
-    traitsJSON[1].traits[0],
-    traitsJSON[2].traits[1],
-    traitsJSON[3].traits[2],
-    traitsJSON[4].traits[1],
-    traitsJSON[5].traits[3],
-    traitsJSON[6].traits[2],
-    traitsJSON[7].traits[0],
-    traitsJSON[8].traits[2]
+    traitTypesMapping['Background'].nameToMaleTraitMapping['Night Sky (Galaxy)'], 
+    traitTypesMapping['Skin'].nameToMaleTraitMapping['Pale'],
+    traitTypesMapping['Neck'].nameToMaleTraitMapping['Stripes'],
+    traitTypesMapping['Clothes'].nameToMaleTraitMapping['Black Striped Yukata'],
+    traitTypesMapping['Expression'].nameToMaleTraitMapping['Smile'],
+    traitTypesMapping['Earring'].nameToMaleTraitMapping['Cross'],
+    traitTypesMapping['Face Accessory'].nameToMaleTraitMapping['None'],
+    traitTypesMapping['Hair'].nameToMaleTraitMapping['Parted'],
+    traitTypesMapping['Head Accessory'].nameToMaleTraitMapping['Mask']
 ] 
 const aaronTraits: Trait[] = []
 const steveTraits: Trait[] = []
@@ -59,13 +61,12 @@ const steve = new KizunaAvatar(danielTraits, Gender.Male);
 
 const TeamSection = () => {
     return (
-      <Wrapper>
-        <InnerWrapper>
+        <div>
             <Header text="Team"/>
             <Content>
                 <Team>
                     <MemberWrapper>
-                        <Avatar kizunaAvatar={daniel} image={`./avatars/ikura_1.png`}/>
+                        <Avatar kizunaAvatar={daniel} image={`${s3Link}avatars/kizuna_1.png`}/>
                         <MemberDescription>
                             <InfoRow>
                                 <h2>
@@ -80,18 +81,18 @@ const TeamSection = () => {
                         </MemberDescription>
                     </MemberWrapper>
                     <MemberWrapper>
-                        <Avatar kizunaAvatar={aaron} image={`./avatars/ikura_3.png`}/>
+                        <Avatar kizunaAvatar={aaron} image={`${s3Link}avatars/kizuna_3.png`}/>
                         <MemberDescription>
                             <h2>
-                                ABaron
+                                Jam
                             </h2>
                             <MemberStory>
                                 Aspiring artist trying to go full time. 
                             </MemberStory>
                         </MemberDescription>
                     </MemberWrapper>
-                    <MemberWrapper>
-                        <Avatar kizunaAvatar={steve} image={`./avatars/ikura_2.png`}/>
+                    {/* <MemberWrapper>
+                        <Avatar kizunaAvatar={steve} image={`${s3Link}avatars/kizuna_2.png`}/>
                         <MemberDescription>
                             <h2>
                                 Steve
@@ -100,11 +101,10 @@ const TeamSection = () => {
                                 Purveyor of anime.
                             </MemberStory>
                         </MemberDescription>
-                    </MemberWrapper>
+                    </MemberWrapper> */}
                 </Team>
             </Content>
-        </InnerWrapper>        
-      </Wrapper>
+        </div>
     )
   }
 

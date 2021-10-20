@@ -207,7 +207,7 @@ interface ProgressBarProps {
 
 const ProgressBar = ({progress, end}: ProgressBarProps) => {
   const [ref, {width}] = useMeasure();
-  const props = useSpring({ from: { width: 0}, to:{ width: progress/end * width } })
+  const props = useSpring({ from: { width: 0}, to:{ width: (isNaN(progress/end) ? 0 : (progress/end)) * width } })
 
   return (
     <WrappedProgressBar ref={ref}>

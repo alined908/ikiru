@@ -54,7 +54,6 @@ const FactorySection = () => {
         newLayers[0] = traitsJSON[0].traits[0];
         setImageLayers([...newLayers]);
         setActiveTraitType(0);
-        setActiveTrait(0);
     },[gender]) 
 
     useEffect(() => {

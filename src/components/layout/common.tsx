@@ -1,25 +1,23 @@
 import _ from 'lodash';
 import {useEffect, useRef, useState, MutableRefObject} from 'react';
 import styled from 'styled-components';
-import { metaplexAttribute } from '../../sections/NFTDisplay';
 import VanillaTilt from 'vanilla-tilt';
 import { Link } from 'react-router-dom';
 import { useSpring, config, animated } from 'react-spring';
 import { ButtonProps } from '../../sections/MintSection';
-import { TextEncoder } from 'util';
-import { MintButton } from '../../sections/MintSection';
 
 export const Main = styled.div`
   display: flex;
   flex-direction: column;
-  background: black;
+  flex: 1;
 `
 
 export const Body = styled.div`
   display: flex;
   flex-direction: column;
-  background: white;
+  background: var(--light-bg);
   color: black;
+  padding-bottom: 3rem;
 
 `
 
@@ -27,7 +25,12 @@ export const Content = styled.div`
     display: flex;
     flex-direction: column;
     width: 100%;
-    margin: 3rem 0;
+    margin: 2rem 0;
+    align-items: center;
+
+    &> div {
+        width: 850px !important;
+    }
 `
 
 interface HeaderProps {
@@ -48,6 +51,7 @@ const WrappedHeader = styled.div`
     display: flex;
     align-items: center;
     width: 100%;
+    justify-content: center;
 `
 
 export const ExternalButton = styled.a<ButtonProps>`
@@ -56,12 +60,12 @@ export const ExternalButton = styled.a<ButtonProps>`
     align-items: center;
     cursor: pointer;
     font-size:  ${props => {
-    if (props.size === 'small') {
-        return '1rem'
-    } else {
-        return '1.2rem'
-    }
-    }};
+        if (props.size === 'small') {
+            return '1rem'
+        } else {
+            return '1.2rem'
+        }
+        }};
     font-weight: 700;
     color: ${props => props.color ?? "white"};
     font-family: 'Rubik', sans-serif;
@@ -88,27 +92,27 @@ export const ExternalButton = styled.a<ButtonProps>`
     transition: all .33s ease;
 
     &:hover {
-    box-shadow: var(--shadow-l);
-    transform: scale(1.05);
-    background: var(--black-hover);
+        box-shadow: var(--shadow-l);
+        transform: scale(1.05);
+        background: var(--black-hover);
     }
 
     &:disabled {
-    background: grey;
-    cursor: default;
-    box-shadow: none;
+        background: grey;
+        cursor: default;
+        box-shadow: none;
     }
 
     &:disabled:hover {
-    transform: none;
+        transform: none;
     }
 `
 
 const HeaderText = styled.mark`
     display: inline;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
     margin: 0;
-    font-size: 2.5rem;
+    font-size: 1.8rem;
     font-weight: 600;
     text-align: center;
     padding: .7rem 1rem;
