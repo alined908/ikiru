@@ -20,6 +20,7 @@ import {
 import { Wrapper, ExternalButton } from "../components/layout/common";
 import useMeasure from "react-use-measure";
 import Rotatooor from "../components/Rotatooor";
+import { deviceSizes } from "../constants";
 
 const CounterText = styled.span``; // add your styles here
 
@@ -88,6 +89,32 @@ export const MintButton = styled.button<ButtonProps>`
   &:disabled:hover {
     transform: none;
   }
+
+  @media ${deviceSizes.laptop} {
+    min-width: ${props => {
+        if (props.size === 'small') {
+            return '80px'
+        } else {
+            return '145px'
+        }
+    }};
+
+    min-height: ${props => {
+        if (props.size === 'small') {
+            return '35px'
+        } else {
+            return '50px'
+        }
+    }};
+
+    font-size:  ${props => {
+        if (props.size === 'small') {
+            return '.9rem'
+        } else {
+            return '1rem'
+        }
+    }};
+}
 `;
 
 const RainbowText = styled.div`
@@ -133,12 +160,22 @@ const Directions = styled.div`
     color: red;
   }
 
+  @media ${deviceSizes.laptop} {
+    margin-bottom: 1rem;
+    h1 {
+      font-size: 2rem;
+    }
+  }
  
 `
 
 const Tip = styled.div`
-  font-size: 1rem !important;
+  font-size: 1rem;
   color: grey;
+
+  @media ${deviceSizes.laptop} {
+      font-size: .9rem;
+  }
 `
 
 const Steps = styled.div`
@@ -150,6 +187,15 @@ const Steps = styled.div`
     font-weight: bold;
     margin-bottom: 1rem;
   }
+
+  @media ${deviceSizes.laptop} {
+    margin-top: 1.5rem;
+
+    > div {
+      font-size: 1rem;
+    }
+  }
+
 `
 
 const MintInner = styled.div`
@@ -157,6 +203,12 @@ const MintInner = styled.div`
     padding: 1rem 2rem 2rem 2rem;
     margin-left: 3rem;
     box-shadow: var(--shadow-m);
+
+    @media ${deviceSizes.laptop} {
+      margin-top: 2rem;
+      margin-left: 0;
+      padding: .5rem 1.5rem 1.5rem 1.5rem;
+    }
 `;
 
 const CustomWrapper = styled(Wrapper)`
@@ -198,6 +250,11 @@ const WrappedProgressBar = styled.div`
   border-radius: .5rem;
   margin-bottom: 2rem;
   overflow: hidden;
+
+  @media ${deviceSizes.laptop} {
+    width: 400px;
+    margin-bottom: 1.5rem;
+  }
 `
 
 interface ProgressBarProps {
@@ -225,6 +282,16 @@ const MintWrapper = styled.div`
   position: absolute;
   top: 30%;
   flex-wrap: wrap;
+
+  @media ${deviceSizes.laptop} {
+    position: initial;
+  }
+`
+
+const WalletBalance = styled.div`
+  @media ${deviceSizes.laptop} {
+    font-size: .9rem;
+  }
 `
 
 const MintSection = (props: HomeProps) => {
@@ -406,13 +473,13 @@ const MintSection = (props: HomeProps) => {
               )}
             </MintButton>
             
-            <div>
+            <WalletBalance>
               {wallet && 
                 <h3>
                   Balance: {(balance || 0).toLocaleString()} SOL
                 </h3>
               }
-            </div>
+            </WalletBalance>
           </MintButtonContainer>
         </MintInner>
       </MintWrapper>

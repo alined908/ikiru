@@ -8,7 +8,7 @@ import RoadMapSection from './RoadmapSection';
 import TeamSection from './TeamSection';
 
 const InfoSectionWrapper = styled.div`
-    margin-top: 8rem;
+    
 `
 
 const InfoSection = () => {

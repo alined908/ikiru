@@ -3,6 +3,11 @@ import { arweaveData } from "./sections/NFTDisplay";
 export const projectTitle = "Kizuna";
 export const launchDate = new Date(10, 15, 2021);
 
+export const deviceSizes = {
+    mobile: '(max-width: 500px)',
+    laptop: '(max-width: 1050px)',
+  }
+
 export enum Rarity {
     Common,
     Uncommon,

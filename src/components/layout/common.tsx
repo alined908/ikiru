@@ -5,6 +5,7 @@ import VanillaTilt from 'vanilla-tilt';
 import { Link } from 'react-router-dom';
 import { useSpring, config, animated } from 'react-spring';
 import { ButtonProps } from '../../sections/MintSection';
+import { deviceSizes } from '../../constants';
 
 export const Main = styled.div`
   display: flex;
@@ -18,18 +19,23 @@ export const Body = styled.div`
   background: var(--light-bg);
   color: black;
   padding-bottom: 3rem;
-
 `
 
 export const Content = styled.div`
     display: flex;
     flex-direction: column;
-    width: 100%;
-    margin: 2rem 0;
+    width: 90%;
+    margin: 2rem auto;
     align-items: center;
-
-    &> div {
+    
+    & > div {
         width: 850px !important;
+    }
+
+    @media ${deviceSizes.laptop} {
+        & > div {
+            width: 100% !important;
+        }
     }
 `
 
@@ -52,6 +58,10 @@ const WrappedHeader = styled.div`
     align-items: center;
     width: 100%;
     justify-content: center;
+`
+
+const buttonStyle = `
+
 `
 
 export const ExternalButton = styled.a<ButtonProps>`
@@ -105,6 +115,32 @@ export const ExternalButton = styled.a<ButtonProps>`
 
     &:disabled:hover {
         transform: none;
+    }
+
+    @media ${deviceSizes.laptop} {
+        min-width: ${props => {
+            if (props.size === 'small') {
+                return '80px'
+            } else {
+                return '145px'
+            }
+        }};
+
+        min-height: ${props => {
+            if (props.size === 'small') {
+                return '35px'
+            } else {
+                return '50px'
+            }
+        }};
+
+        font-size:  ${props => {
+            if (props.size === 'small') {
+                return '.9rem'
+            } else {
+                return '1.1rem'
+            }
+        }};
     }
 `
 
@@ -189,17 +225,18 @@ export const NumberAnimated = ({newTarget} : any) => {
     return <animated.div>{number.to(n => n.toFixed(2))}</animated.div>
 }
 
-export interface AvatarWrapperProps {
-    width: number
-    height: number
-}
 
-export const AvatarWrapper = styled.div<AvatarWrapperProps>`
+export const AvatarWrapper = styled.div`
     display: flex;
     box-shadow: var(--shadow-l);
-    width: ${props => props.width}px;
-    height: ${props => props.height}px;
+    width: 465px;
+    height: 465px;
     border-radius: .25rem;
+
+    @media ${deviceSizes.laptop} {
+        width: 380px;
+        height: 380px;
+    }
 `
 
 export const AvatarImage = styled.img`
@@ -207,12 +244,12 @@ export const AvatarImage = styled.img`
     height: 100%;
 `
 
-export const Avatar = ({image, width, height, kizunaAvatar} : any) => {
+export const Avatar = ({image, kizunaAvatar} : any) => {
 
     return (
         <Link to={{pathname: '/create', state: {kizunaAvatar: JSON.stringify(kizunaAvatar)}}}>
             <Tilt options={tiltOptions}>
-                <AvatarWrapper width={width} height={height}>
+                <AvatarWrapper>
                     <AvatarImage src={image}/>
                 </AvatarWrapper>
             </Tilt>

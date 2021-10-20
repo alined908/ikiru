@@ -150,18 +150,16 @@ interface WrappedHeaderProps {
   isHome : boolean
 } 
 
-const deviceSizes = {
-  mobile: '(max-width: 500px)',
-  laptop: '(max-width: 1050px)',
-}
 
 const WrappedHeader = styled.div<WrappedHeaderProps>`
   display: flex;
   width: 100%;
   margin: 0 auto;
   z-index: 12;
-  position: absolute;
-  top: 0;
+
+  ${props => !props.isHome ? "" : `position: absolute;
+  top: 0;`}
+  
   background: transparent;
 
   & > div {
@@ -335,8 +333,8 @@ const CloseButton = styled.div`
   position: absolute;
   right: 3rem;
   top: 3rem;
-  width: 32px;
-  height: 32px;
+  width: 35px;
+  height: 35px;
   cursor: pointer;
   z-index: 15;
 
@@ -363,8 +361,8 @@ const Burger = styled.div`
   cursor: pointer;
   span {
       display: block;
-      width: 30px;
-      height: 4px;
+      width: 35px;
+      height: 5px;
       margin-bottom: 5px;
       position: relative;
       background: black;

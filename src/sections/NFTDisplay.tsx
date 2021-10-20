@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import {Wrapper, Header, Content, AvatarImage, AvatarWrapperProps} from '../components/layout/common';
+import {Wrapper, Header, Content, AvatarImage} from '../components/layout/common';
 import * as anchor from "@project-serum/anchor";
 import * as web3 from '@solana/web3.js';
 import {deserializeUnchecked} from "borsh";
@@ -334,8 +334,7 @@ const NFTDisplaySection = () => {
             {displayNFTs.map((displayNFT : DisplayNFT) => 
               <DisplayAvatar 
                 key={displayNFT.mint}
-                width={300} 
-                height={300} 
+
                 image={displayNFT.kizunaAvatar.image!} 
                 kizunaAvatar={displayNFT.kizunaAvatar}
                 metadata={displayNFT.metadata}
@@ -352,10 +351,10 @@ const NFTDisplaySection = () => {
     )
   }
 
-  export const DisplayAvatarWrapper = styled.div<AvatarWrapperProps>`
+  export const DisplayAvatarWrapper = styled.div`
     display: flex;
-    width: ${props => props.width}px;
-    height: ${props => props.height}px;
+    width: 300px;
+    height: 300px;
     border-radius: .25rem;
     max-width: 500px;
 `
@@ -388,15 +387,13 @@ export const DisplayAvatarTrait = styled.div`
 
 interface DisplayAvatarProps {
   image: string
-  width: number
-  height: number
   kizunaAvatar: KizunaAvatar
   mint: string
   arweaveData: arweaveData
   metadata: Data
 }
 
-  export const DisplayAvatar = ({image, width, height, kizunaAvatar, mint, arweaveData, metadata} : DisplayAvatarProps) => {
+  export const DisplayAvatar = ({image, kizunaAvatar, mint, arweaveData, metadata} : DisplayAvatarProps) => {
     const wallet = useWallet();
     const connection = useConnection().connection;
 
@@ -494,7 +491,7 @@ interface DisplayAvatarProps {
             // <Tilt options={tiltOptions}>
             <div>
                 <Link to={`/display/${arweaveData.name.split('#')[1]}`}>
-                  <DisplayAvatarWrapper width={width} height={height}>
+                  <DisplayAvatarWrapper>
                       <AvatarImage src={image}/>
                   </DisplayAvatarWrapper>
                 </Link>

@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import {Header, Wrapper, Content, InnerWrapper} from '../components/layout/common';
 import SocialMediaComponent from '../components/social/SocialMedia';
 import { Avatar } from '../components/layout/common';
-import { s3Link } from '../constants';
+import { s3Link, deviceSizes } from '../constants';
 import {Gender, Trait, KizunaAvatar, traitsJSON, traitTypesMapping} from '../constants';
 
 const Description = styled.div`
@@ -17,13 +17,18 @@ const Team = styled.div`
     min-width: 1000px;
     grid-template-columns: 50% 50%;
     grid-row-gap: 3rem;
+    grid-column-gap: 2rem;
     justify-items: center;
+
+    @media ${deviceSizes.laptop} {
+        grid-template-columns: 100%;
+        min-width: 0;
+    }
 `
 
 const MemberWrapper = styled.div`
     display: flex;
     flex-direction: column;
-    width: 380px;
 `
 
 const MemberDescription = styled.div`
@@ -76,7 +81,7 @@ const TeamSection = () => {
                             </InfoRow>
                             
                             <MemberStory>
-                                Lover of Monkes. Classy Thug Bird. Quit web2 to pursue web3.
+                                Monke, Thugbird. Solana native
                             </MemberStory>
                         </MemberDescription>
                     </MemberWrapper>
