@@ -32,9 +32,11 @@ import { Sakura } from './sections/FAQSection';
 import SocialMediaComponent from "./components/social/SocialMedia";
 import { AnimateSharedLayout, motion } from "framer-motion";
 import { useMediaQuery } from 'react-responsive'
-import { Gender, KizunaAvatar } from "./constants";
+import { deviceSizes, Gender, KizunaAvatar } from "./constants";
 import InfoSection from "./sections/InfoSection";
 import { random } from "lodash";
+import { hasProps } from "@react-spring/core/dist/declarations/src/helpers";
+import { AnyFn } from "@react-spring/types";
 
 const network = process.env.REACT_APP_SOLANA_NETWORK as WalletAdapterNetwork;
 const treasury = new anchor.web3.PublicKey(process.env.REACT_APP_TREASURY_ADDRESS!);
@@ -71,14 +73,20 @@ const LandingSplash = styled.div`
   justify-content: center;
   background-image: url('/backgrounds/cherry_blossom.png');
   filter: blur(5px);
-  opacity: .8;
+  opacity: .7;
   flex-direction: column;
   align-items: center;
 `
 
-const LandingImage = styled.img`
+interface LandingImageProps {
+  avatarPosition: boolean
+}
+
+const LandingImage = styled.img<LandingImageProps>`
   position: absolute;
-  transition: all .3s ease;
+  height:100%;
+  width: auto;
+  top:0;
 
   @media (min-width: 1920px) {
     width: 100%;
@@ -87,9 +95,33 @@ const LandingImage = styled.img`
   @media (max-width: 1920px) {
     height:100%;
   }
+
+  
+  left: ${props => props.avatarPosition ? "auto" : "0"};
+  right: ${props => !props.avatarPosition ? "auto" : "0"};
+  
 `
 
+// const LandingImageComponent = ({opacity, avatarPosition} : any) => {
+//   return (
+//     <LandingImage opacity={opacity} avatarPosition={avatarPosition} src="./backgrounds/landing.png"/>
+//   )
+// }
+
+// const AnimatedLandingImage = animated(LandingImageComponent)
+
 const Landing = ({children} : any) => {
+
+  const props = useSpring({
+    from: { opacity: 0 },
+    to: {opacity: 1},
+    delay: 700,
+    config: { mass: 10, tension: 10, friction: 10, duration: 2000 }
+  });
+
+  const generateRandom = () => {
+    return Math.random() < 0.5;
+  }
 
   return (
     <LandingWrapper>
@@ -97,7 +129,10 @@ const Landing = ({children} : any) => {
         
      
       </LandingSplash>
-      <LandingImage src="./backgrounds/landing.png"/>
+      <animated.div style={props}>
+          <LandingImage avatarPosition={generateRandom()} src="./backgrounds/landing.png"/>
+      </animated.div>
+      
     </LandingWrapper>
   )
 }
@@ -190,10 +225,14 @@ const InnerHeader = styled.div<WrappedHeaderProps>`
   display: flex;
   width: 95%;
   justify-content: space-between;
-  padding: 1rem 3rem;
+  padding: 1.75rem 3rem;
   align-items: center;
   background: transparent;
   border-radius: .7rem;
+
+  @media ${deviceSizes.mobile} {
+    padding: 1.25rem 1.5rem;  
+  }
 `
 
 const Navigation = styled.div`
@@ -201,15 +240,19 @@ const Navigation = styled.div`
   align-items: center;
 `
 
-const Logo = styled.div`
+const Logo = styled.img`
   display: flex;
   align-items: center;
-  font-size: 2.2rem;
-  font-weight: 800;
+  height: 70px;
 
   &:hover {
     color: pink;
+    transform: scale(1.1);
     transition: all .33s ease;
+  }
+
+  @media ${deviceSizes.laptop} {
+    font-size: 2rem;
   }
 `
 
@@ -242,8 +285,7 @@ const navigationLinks = [
   {name: "About", path: "/about"},
   {name: "Create", path: "/create"},
   {name: "Mint", path: "/mint"},
-  {name: "Display", path: "/display"},
-  {name: "Connect", path: "connect"}
+  {name: "Display", path: "/display"}
 ]
 
 const Header = () => {
@@ -271,15 +313,9 @@ const Header = () => {
         <animated.div style={headerProps}>
         <InnerHeader isHome={isHome}>
           <Navigation>
-            <NavigationTab>
-                <Link to="/">
-                  <Logo>
-                    <Sakura src={`./sakura/red_sakura.png`}/>
-                    Kizuna
-                  </Logo>
-                </Link>
-              </NavigationTab>
-            
+            <Link to="/">
+              <Logo src="./misc/logo.png"/>
+            </Link>
           </Navigation>
           {!isMobileNav ? 
               <NavActionBar>
@@ -331,8 +367,8 @@ const closeContent = `
 const CloseButton = styled.div`
 
   position: absolute;
-  right: 3rem;
-  top: 3rem;
+  right: 2rem;
+  top: 1.75rem;
   width: 35px;
   height: 35px;
   cursor: pointer;

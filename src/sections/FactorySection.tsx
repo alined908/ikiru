@@ -54,6 +54,7 @@ const FactorySection = () => {
         newLayers[0] = traitsJSON[0].traits[0];
         setImageLayers([...newLayers]);
         setActiveTraitType(0);
+        setActiveTrait(0);
     },[gender]) 
 
     useEffect(() => {
@@ -76,20 +77,18 @@ const FactorySection = () => {
         let randomizedLayers : (ITrait | null)[] = [];
         let activeTraitIndex = 0;
 
-
         for(let i = 0; i < traitsJSON.length; i++) {
-            let traitType: ITraitType = traitsJSON[i];
-            let possibleCandidates : (ITrait | null)[] = [...traitType.traits].filter(trait => trait.gender === gender || trait.gender === Gender.Unisex);
-            let randomIndex = random(0, possibleCandidates.length - 1);
+            let traitType: TraitType = traitsJSON[i];
+            let [randomTrait, randomTraitIndex] = traitType.randomTrait(gender);
             if (i === activeTraitType) {
-                activeTraitIndex = randomIndex;
+                activeTraitIndex = randomTraitIndex
             }
-            let chosen = possibleCandidates[randomIndex] as (null | ITrait);
-            randomizedLayers.push(chosen)
+            randomizedLayers.push(randomTrait)
         }
         
         setImageLayers([...randomizedLayers]);
-        setActiveTrait(activeTraitIndex);
+        console.log(activeTraitIndex);
+        setActiveTrait(activeTraitIndex!);
     }
 
     const generateRandomTrait = () => {

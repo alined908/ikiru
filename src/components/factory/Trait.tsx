@@ -18,9 +18,9 @@ const Trait = ({traitType: {layer}, trait, active, position, handleClick} : Trai
 
     return (
         <Tilt options={tiltOptions}>
-            <TraitWrapper active={active} rarity={trait.rarity_threshold} onClick={manageClick}>
+            <TraitWrapper active={active} rarity={trait.rarity} onClick={manageClick}>
                 <TraitImageWrapper>
-                    <TraitImage src={trait.path}/>
+                    <TraitImage src={trait.preview ? trait.preview : trait.path}/>
                 </TraitImageWrapper>
                 <TraitDescription>
                     <TraitAttribute>

@@ -21,7 +21,7 @@ const TraitTypesSection = ({imageLayers, activeTraitType, clickTraitType} : Trai
                     {(imageLayers[index] === null || imageLayers[index]?.name === "None") ?
                         <SkeletonTraitTypePreview/>
                         :
-                        <TraitTypePreview src={imageLayers[index]?.path} />
+                        <TraitTypePreview src={imageLayers[index]?.preview ?? imageLayers[index]?.path} />
                     }
                     
                     <div>

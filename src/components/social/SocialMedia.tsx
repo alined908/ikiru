@@ -16,9 +16,10 @@ const SocialMediaWrapper = styled.div`
     align-items: center;
     padding: .25rem;
     margin-right: 1rem;
+    transition: all .3s ease;
 
-    path {
-        transition: fill .33s ease;
+    &:hover {
+        transform: scale(1.2);
     }
 `
 
