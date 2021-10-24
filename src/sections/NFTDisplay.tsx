@@ -436,7 +436,7 @@ interface DisplayAvatarProps {
       let seeds : Buffer[] = [Buffer.from('metadata'), METADATA_PROGRAM_ID.toBuffer(), mintKey.toBuffer()]
       let metadataAccount = (await PublicKey.findProgramAddress(seeds, METADATA_PROGRAM_ID))[0];
       let newData = metadata;
-      newData.uri = 'https://kizuna.s3.us-west-2.amazonaws.com/0.json'
+      newData.uri = 'https://kizuna.s3.us-west-2.amazonaws.com/generative/0.json'
 
       const value = new UpdateMetadataArgs({
         data : newData,

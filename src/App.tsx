@@ -116,7 +116,7 @@ const Landing = ({children} : any) => {
     from: { opacity: 0 },
     to: {opacity: 1},
     delay: 700,
-    config: { mass: 10, tension: 10, friction: 10, duration: 2000 }
+    config: { mass: 10, tension: 10, friction: 10, duration: 1000 }
   });
 
   const generateRandom = () => {
@@ -285,7 +285,7 @@ const navigationLinks = [
   {name: "About", path: "/about"},
   {name: "Create", path: "/create"},
   {name: "Mint", path: "/mint"},
-  {name: "Display", path: "/display"}
+  {name: "Connect", path: "/display"}
 ]
 
 const Header = () => {

@@ -162,6 +162,26 @@ export const traitTypes = [
     'Head Accessory'
 ]
 
+export const constructAvatarFromGenderAndTrait = (gender: Gender, traitNames: string[]) : KizunaAvatar => {
+    let traits : Trait[] = [];
+
+    for(let i = 0; i < traitTypes.length; i++) {
+        let traitType = traitTypes[i];
+        let traitName = traitNames[i];
+        let trait;
+
+        if (gender === Gender.Male) {
+            trait = traitTypesMapping[traitType].nameToMaleTraitMapping[traitName];
+        } else {
+            trait = traitTypesMapping[traitType].nameToFemaleTraitMapping[traitName];
+        }
+
+        traits.push(trait);
+    }
+
+    return new KizunaAvatar(traits, gender)
+}
+
 export const BackgroundTraits = [
     new Trait({
         name: "Blood Moon",
@@ -891,7 +911,7 @@ export const HairTraits = [
         rarity: Rarity.UltraRare,
         gender: Gender.Female,
         path: "traits/female/hair/braided.png",
-        preview: "trait_previews/female/hair/branded.png"
+        preview: "trait_previews/female/hair/braided.png"
     }), 
     new Trait({
         name: "Bun",
@@ -1013,13 +1033,13 @@ export const traitsJSON : TraitType[] = [
     HeadAccessory
 ]
 
-export const traitTypesMapping = {
+export const traitTypesMapping : any = {
     'Background': Background,
     'Skin': Skin,
     'Neck': Neck,
     'Clothes': Clothes,
     'Expression': Expression,
-    'Earring': Earring,
+    'Earrings': Earring,
     'Face Accessory': FaceAccessory,
     'Hair': Hair,
     'Head Accessory': HeadAccessory
@@ -1029,3 +1049,16 @@ export const genderMapping = {
     'Female': Gender.Female,
     'Male': Gender.Male
 }
+
+let kizuna2 = constructAvatarFromGenderAndTrait(Gender.Male, ['Blue Clouds', 'Pale', 'None', 'Red Hood Outfit', 'Frown', 'Studs', 'None', 'Parted Overgrown', 'None'])
+let kizuna1 = constructAvatarFromGenderAndTrait(Gender.Male, ['Night Sky (Galaxy)', 'Light', 'None', 'Solana Bomber', 'Smile', 'Studs', 'None', 'Parted', 'None'])
+let kizuna3 = constructAvatarFromGenderAndTrait(Gender.Female, ['Night Sky (Moon)', 'Light', 'Blooming Necklace', 'Blue Striped Yukata', 'Closed Eyes', 'None', 'None', 'Ponytail', 'None'])
+let kizuna4 = constructAvatarFromGenderAndTrait(Gender.Female, ['Red Square', 'Light', 'None', 'Brown Jacket Uniform', 'Frown', 'None', 'None', 'Braided', 'None'])
+let kizuna5 = constructAvatarFromGenderAndTrait(Gender.Female, ['Blue Clouds', 'Pale', 'None', 'Blue Tee', 'Closed Eyes', 'None', 'None', 'Short Ribbons', 'None'])
+let kizuna6 = constructAvatarFromGenderAndTrait(Gender.Female, ['Cherry Blossom', 'Light', 'Choker', 'Black Uniform', 'Smile', 'None', 'None', 'Bun', 'Flower'])
+let kizuna7 = constructAvatarFromGenderAndTrait(Gender.Male, ['Industrial', 'Tan', 'Stripes', 'Black Tee', 'Smile', 'Cross', 'None', 'Short', 'Mask'])
+let kizuna8 = constructAvatarFromGenderAndTrait(Gender.Male, ['Solana Seigaha', 'Tan', 'None', 'Black Uniform', 'Closed Eyes', 'Hanafuda', 'Eyepatch', 'Parted Overgrown', 'None'])
+
+export const sampleKizunaAvatars = [
+    kizuna1, kizuna2, kizuna3, kizuna4, kizuna5, kizuna6, kizuna7, kizuna8
+]

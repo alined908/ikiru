@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import {Header, Wrapper, Content, InnerWrapper} from '../components/layout/common';
 import SocialMediaComponent from '../components/social/SocialMedia';
 import { Avatar } from '../components/layout/common';
-import { s3Link, deviceSizes } from '../constants';
+import { s3Link, deviceSizes, constructAvatarFromGenderAndTrait, sampleKizunaAvatars} from '../constants';
 import {Gender, Trait, KizunaAvatar, traitsJSON, traitTypesMapping} from '../constants';
 
 const Description = styled.div`
@@ -45,25 +45,6 @@ const MemberStory = styled.div`
     color: var(--light-text);
 `
 
-//Todo - Remap words -> posiiton
-
-const danielTraits : Trait[] = [
-    traitTypesMapping['Background'].nameToMaleTraitMapping['Night Sky (Galaxy)'], 
-    traitTypesMapping['Skin'].nameToMaleTraitMapping['Pale'],
-    traitTypesMapping['Neck'].nameToMaleTraitMapping['Stripes'],
-    traitTypesMapping['Clothes'].nameToMaleTraitMapping['Black Striped Yukata'],
-    traitTypesMapping['Expression'].nameToMaleTraitMapping['Smile'],
-    traitTypesMapping['Earring'].nameToMaleTraitMapping['Cross'],
-    traitTypesMapping['Face Accessory'].nameToMaleTraitMapping['None'],
-    traitTypesMapping['Hair'].nameToMaleTraitMapping['Parted'],
-    traitTypesMapping['Head Accessory'].nameToMaleTraitMapping['Mask']
-] 
-const aaronTraits: Trait[] = []
-const steveTraits: Trait[] = []
-const daniel = new KizunaAvatar(danielTraits, Gender.Male);
-const aaron = new KizunaAvatar(danielTraits, Gender.Male);
-const steve = new KizunaAvatar(danielTraits, Gender.Male);
-
 const TeamSection = () => {
     return (
         <div>
@@ -71,7 +52,7 @@ const TeamSection = () => {
             <Content>
                 <Team>
                     <MemberWrapper>
-                        <Avatar kizunaAvatar={daniel} image={`${s3Link}avatars/kizuna_1.png`}/>
+                        <Avatar kizunaAvatar={sampleKizunaAvatars[0]} image={`${s3Link}avatars/kizuna_1.png`}/>
                         <MemberDescription>
                             <InfoRow>
                                 <h2>
@@ -86,7 +67,7 @@ const TeamSection = () => {
                         </MemberDescription>
                     </MemberWrapper>
                     <MemberWrapper>
-                        <Avatar kizunaAvatar={aaron} image={`${s3Link}avatars/kizuna_3.png`}/>
+                        <Avatar kizunaAvatar={sampleKizunaAvatars[1]} image={`${s3Link}avatars/kizuna_2.png`}/>
                         <MemberDescription>
                             <h2>
                                 Jam

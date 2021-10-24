@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Avatar } from './layout/common';
 import { shuffle } from 'lodash';
-import { s3Link } from '../constants';
+import { s3Link, sampleKizunaAvatars } from '../constants';
 
 const WrappedRotator = styled.div`
     display: flex;
@@ -10,6 +10,7 @@ const WrappedRotator = styled.div`
 
 const numAvail = [ ...Array(8).keys() ].map( i => i+1);
 let shuffled = shuffle(numAvail);
+console.log(shuffled);
 
 const Rotatooor = () => {
     const [numRotation, setNumRotation] = useState(0);
@@ -24,14 +25,21 @@ const Rotatooor = () => {
                 setNumRotation(numRotation + 1);
             }
 
-        }, 1000)
+        }, 10000)
 
         return () => clearInterval(interval);
     })
 
+    const randomNum = shuffled[numRotation];
+    console.log(randomNum);
+    console.log(sampleKizunaAvatars[randomNum]);
+
     return (
         <WrappedRotator>
-            <Avatar image={`${s3Link}avatars/kizuna_${shuffled[numRotation]}.png`}/>
+            <Avatar 
+                kizunaAvatar={sampleKizunaAvatars[randomNum - 1]} 
+                image={`${s3Link}avatars/kizuna_${randomNum}.png`}
+            />
         </WrappedRotator>
     )
 }

@@ -87,7 +87,6 @@ const FactorySection = () => {
         }
         
         setImageLayers([...randomizedLayers]);
-        console.log(activeTraitIndex);
         setActiveTrait(activeTraitIndex!);
     }
 
