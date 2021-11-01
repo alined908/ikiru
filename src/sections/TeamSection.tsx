@@ -52,7 +52,7 @@ const TeamSection = () => {
             <Content>
                 <Team>
                     <MemberWrapper>
-                        <Avatar kizunaAvatar={sampleKizunaAvatars[0]} image={`${s3Link}avatars/kizuna_1.png`}/>
+                        <Avatar kizunaAvatar={sampleKizunaAvatars[8]} image={`${s3Link}avatars/kizuna_9.png`}/>
                         <MemberDescription>
                             <InfoRow>
                                 <h2>

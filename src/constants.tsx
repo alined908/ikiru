@@ -534,7 +534,7 @@ export const ClothesTraits = [
         path: "traits/male/clothes/yellow_tee.png"
     }),
     new Trait({
-        name: "None",
+        name: "Naked",
         probability: 1,
         rarity: Rarity.Legendary,
         gender: Gender.Male,
@@ -883,7 +883,7 @@ export const FaceAccessory = new TraitType({
 export const HairTraits = [
     new Trait({
         name: "Parted",
-        probability: 33,
+        probability: 20,
         rarity: Rarity.Common,
         gender: Gender.Male,
         path: "traits/male/hair/parted.png",
@@ -891,7 +891,7 @@ export const HairTraits = [
     }), 
     new Trait({
         name: "Parted Overgrown",
-        probability: 33,
+        probability: 20,
         rarity: Rarity.Common,
         gender: Gender.Male,
         path: "traits/male/hair/parted_overgrown.png",
@@ -899,11 +899,34 @@ export const HairTraits = [
     }), 
     new Trait({
         name: "Short",
-        probability: 34,
+        probability: 20,
         rarity: Rarity.Common,
         gender: Gender.Male,
         path: "traits/male/hair/short.png",
         preview: "trait_previews/male/hair/short.png"
+    }),
+    new Trait({
+        name: "Buzzcut",
+        probability: 20,
+        rarity: Rarity.Common,
+        gender: Gender.Male,
+        path: "traits/male/hair/buzzcut.png",
+        preview: "trait_previews/male/hair/buzzcut.png"
+    }),
+    new Trait({
+        name: "Spiky",
+        probability: 20,
+        rarity: Rarity.Common,
+        gender: Gender.Male,
+        path: "traits/male/hair/spiky.png",
+        preview: "trait_previews/male/hair/spiky.png"
+    }),
+    new Trait({
+        name: "Bald",
+        probability: 1,
+        rarity: Rarity.Legendary,
+        gender: Gender.Male,
+        path: "traits/none.png",
     }),
     new Trait({
         name: "Braided",
@@ -1054,11 +1077,12 @@ let kizuna2 = constructAvatarFromGenderAndTrait(Gender.Male, ['Blue Clouds', 'Pa
 let kizuna1 = constructAvatarFromGenderAndTrait(Gender.Male, ['Night Sky (Galaxy)', 'Light', 'None', 'Solana Bomber', 'Smile', 'Studs', 'None', 'Parted', 'None'])
 let kizuna3 = constructAvatarFromGenderAndTrait(Gender.Female, ['Night Sky (Moon)', 'Light', 'Blooming Necklace', 'Blue Striped Yukata', 'Closed Eyes', 'None', 'None', 'Ponytail', 'None'])
 let kizuna4 = constructAvatarFromGenderAndTrait(Gender.Female, ['Red Square', 'Light', 'None', 'Brown Jacket Uniform', 'Frown', 'None', 'None', 'Braided', 'None'])
-let kizuna5 = constructAvatarFromGenderAndTrait(Gender.Female, ['Blue Clouds', 'Pale', 'None', 'Blue Tee', 'Closed Eyes', 'None', 'None', 'Short Ribbons', 'None'])
-let kizuna6 = constructAvatarFromGenderAndTrait(Gender.Female, ['Cherry Blossom', 'Light', 'Choker', 'Black Uniform', 'Smile', 'None', 'None', 'Bun', 'Flower'])
+let kizuna6 = constructAvatarFromGenderAndTrait(Gender.Female, ['Blue Clouds', 'Pale', 'None', 'Blue Tee', 'Closed Eyes', 'None', 'None', 'Short Ribbons', 'None'])
+let kizuna5 = constructAvatarFromGenderAndTrait(Gender.Female, ['Cherry Blossom', 'Light', 'Choker', 'Black Uniform', 'Smile', 'None', 'None', 'Bun', 'Flower'])
 let kizuna7 = constructAvatarFromGenderAndTrait(Gender.Male, ['Industrial', 'Tan', 'Stripes', 'Black Tee', 'Smile', 'Cross', 'None', 'Short', 'Mask'])
 let kizuna8 = constructAvatarFromGenderAndTrait(Gender.Male, ['Solana Seigaha', 'Tan', 'None', 'Black Uniform', 'Closed Eyes', 'Hanafuda', 'Eyepatch', 'Parted Overgrown', 'None'])
+let kizuna9 = constructAvatarFromGenderAndTrait(Gender.Male, ['Hinomaru', 'Pale', 'None', 'White Collared Shirt', 'Smile', 'Cross', 'None', 'Parted Overgrown', 'None'])
 
 export const sampleKizunaAvatars = [
-    kizuna1, kizuna2, kizuna3, kizuna4, kizuna5, kizuna6, kizuna7, kizuna8
+    kizuna1, kizuna2, kizuna3, kizuna4, kizuna5, kizuna6, kizuna7, kizuna8, kizuna9
 ]

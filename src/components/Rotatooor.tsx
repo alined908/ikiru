@@ -8,7 +8,7 @@ const WrappedRotator = styled.div`
     display: flex;
 `
 
-const numAvail = [ ...Array(8).keys() ].map( i => i+1);
+const numAvail = [ ...Array(9).keys() ].map( i => i+1);
 let shuffled = shuffle(numAvail);
 console.log(shuffled);
 
@@ -25,7 +25,7 @@ const Rotatooor = () => {
                 setNumRotation(numRotation + 1);
             }
 
-        }, 10000)
+        }, 1000)
 
         return () => clearInterval(interval);
     })

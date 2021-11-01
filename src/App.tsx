@@ -509,7 +509,7 @@ const App = () => {
 
   return (
     <ConnectionProvider endpoint={endpoint}>
-      <WalletProvider wallets={wallets} autoConnect>
+      <WalletProvider wallets={wallets}>
         <WalletModalProvider logo="./sakura/pink_sakura.png">
           <Router>
             <Header />
